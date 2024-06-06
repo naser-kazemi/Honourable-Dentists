@@ -1,10 +1,26 @@
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.core.exceptions import ValidationError
+from django.views import View
 from rest_framework import generics, status
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from django.conf import settings
-from .models import PatientProfile, DentistProfile
+from .models import User, PatientProfile, DentistProfile
 from .serializers import UserSerializer, PatientProfileSerializer, DentistProfileSerializer
-from ..dental_clinic.utils import get_geocode
+from dental_clinic.utils import get_geocode
+from .validators import validate_password
+from .forms import (PatientRegistrationForm,
+                    DentistRegistrationForm,
+                    UserRegistrationForm,
+                    CustomLoginForm)
+from .validators import validate_password
+from django.contrib.auth.views import LoginView
+
+from datetime import datetime
 
 
 # Create your views here.
@@ -35,3 +51,191 @@ def update_geocode(request):
         return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
     except ValueError as e:
         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def create_user_from_form(request):
+    data = request.data
+
+    print("\n=============================================")
+    print(data)
+    print("=============================================\n")
+
+    password = data.get('password')
+    password_repeat = data.get('password_repeat')
+    try:
+        validate_password(password, password_repeat)
+    except ValidationError as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+    user = User.objects.create(
+        first_name=data['first_name'],
+        last_name=data['last_name'],
+        username=data['username'],
+        password=password,
+        province=data['province'],
+        city=data['city'],
+        address=data['address'],
+        phone_number=data['phone_number'],
+        is_patient=data['is_patient'],
+    )
+
+    if user.is_patient:
+        birth_date = data['birth_date']
+        birth_date = birth_date.split('T')[0]
+        PatientProfile.objects.create(user=user, national_id=data['national_id'], birth_date=birth_date)
+
+    if user.is_dentist:
+        DentistProfile.objects.create(user=user, phone_number=data['phone_number'],
+                                      medical_council_number=data['medical_council_number'])
+
+    # print the user
+    print(f"User created: {user}")
+
+    if user.address:
+        try:
+            latitude, longitude = get_geocode(user.address, settings.NESHAN_API_KEY)
+            user.latitude = latitude
+            user.longitude = longitude
+            user.save()
+        except ValueError as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+    return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
+
+
+def register_patient(request):
+    if request.method == 'POST':
+        form = PatientRegistrationForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            password = data.get('password')
+            password_repeat = data.get('password_repeat')
+            try:
+                validate_password(password, password_repeat)
+            except ValidationError as e:
+                form.add_error('password', e)
+                return render(request, 'register_patient.html', {'form': form})
+
+            user = User.objects.create(
+                username=data['username'],
+                email=data['email'],
+                first_name=data['first_name'],
+                last_name=data['last_name'],
+                address=data['address'],
+                province=data['province'],
+                city=data['city'],
+                phone_number=data['phone_number'],
+                is_patient=True,
+                is_dentist=False
+            )
+
+            user.set_password(password)
+            user.save()
+
+            PatientProfile.objects.create(
+                user=user,
+                national_id=data['national_id'],
+                birth_date=data['birth_date']
+            )
+
+            if user.address:
+                try:
+                    latitude, longitude = get_geocode(user.address, settings.NESHAN_API_KEY)
+                    user.location_latitude = latitude
+                    user.location_longitude = longitude
+                    user.save()
+                except ValueError as e:
+                    messages.error(request, str(e))
+                    return render(request, 'register_patient.html', {'form': form})
+
+            messages.success(request, 'Patient registered successfully!')
+            return redirect('register-patient')
+    else:
+        form = PatientRegistrationForm()
+    return render(request, 'register_patient.html', {'form': form})
+
+
+def register_dentist(request):
+    if request.method == 'POST':
+        form = DentistRegistrationForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            password = data.get('password')
+            password_repeat = data.get('password_repeat')
+            try:
+                validate_password(password, password_repeat)
+            except ValidationError as e:
+                form.add_error('password', e)
+                return render(request, 'register_dentist.html', {'form': form})
+
+            user = User.objects.create(
+                username=data['username'],
+                email=data['email'],
+                first_name=data['first_name'],
+                last_name=data['last_name'],
+                address=data['address'],
+                province=data['province'],
+                city=data['city'],
+                phone_number=data['phone_number'],
+                is_patient=False,
+                is_dentist=True
+            )
+
+            user.set_password(password)
+            user.save()
+
+            DentistProfile.objects.create(
+                user=user,
+                medical_council_number=data['medical_council_number'],
+                email=data['email']
+            )
+
+            if user.address:
+                try:
+                    latitude, longitude = get_geocode(user.address, settings.NESHAN_API_KEY)
+                    user.location_latitude = latitude
+                    user.location_longitude = longitude
+                    user.save()
+                except ValueError as e:
+                    messages.error(request, str(e))
+                    return render(request, 'register_dentist.html', {'form': form})
+
+            messages.success(request, 'Dentist registered successfully!')
+            return redirect('register-dentist')
+    else:
+        form = DentistRegistrationForm()
+    return render(request, 'register_dentist.html', {'form': form})
+
+
+class CustomLoginView(View):
+    form_class = CustomLoginForm
+    template_name = 'login.html'
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                if user.is_patient:
+                    return redirect('patient_dashboard')
+                elif user.is_dentist:
+                    return redirect('dentist_dashboard')
+        return render(request, self.template_name, {'form': form})
+
+
+@login_required
+def patient_dashboard(request):
+    return render(request, 'patient_dashboard.html')
+
+
+@login_required
+def dentist_dashboard(request):
+    return render(request, 'dentist_dashboard.html')

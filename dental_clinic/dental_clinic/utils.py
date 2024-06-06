@@ -1,5 +1,5 @@
 import requests
-from settings import NESHAN_API_KEY
+from .settings import NESHAN_API_KEY
 
 
 def get_geocode(address, api_key=NESHAN_API_KEY):

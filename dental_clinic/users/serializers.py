@@ -9,9 +9,8 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            'user_id', 'email', 'is_patient', 'is_dentist',
-            'national_id', 'first_name', 'last_name', 'address',
-            'city', 'phone_number', 'latitude', 'longitude'
+            'user_id', 'username', 'is_patient', 'is_dentist', 'first_name', 'last_name', 'address',
+            'province', 'city', 'phone_number', 'latitude', 'longitude'
         ]
 
 
@@ -20,7 +19,7 @@ class PatientProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PatientProfile
-        fields = ['user']
+        fields = ['user', 'national_id', 'birth_date']
 
 
 class DentistProfileSerializer(serializers.ModelSerializer):

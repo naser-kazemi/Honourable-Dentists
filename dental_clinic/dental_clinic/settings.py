@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 from datetime import timedelta
 
@@ -25,7 +25,9 @@ SECRET_KEY = 'django-insecure-03n^6mwdz8ov13v$xj*bl#or2g)exd5n2(1t0&xii_&*v4jws=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+NGROK_HOST = "6fe0-5-216-98-58.ngrok-free.app"
+
+ALLOWED_HOSTS = ['localhost', NGROK_HOST, ]
 
 # Application definition
 
@@ -45,6 +47,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'django_filters',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -55,6 +58,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "https://script.google.com",  # Allow Google Apps Script
 ]
 
 ROOT_URLCONF = 'dental_clinic.urls'
@@ -62,7 +70,7 @@ ROOT_URLCONF = 'dental_clinic.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -119,7 +127,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -161,3 +170,16 @@ SIMPLE_JWT = {
 }
 
 NESHAN_API_KEY = "service.0b50a4b3134245198429fe4d937681a0"
+
+import sys
+
+sys.path.append("..")
+sys.path.append(".")
+
+AUTH_USER_MODEL = "users.User"
+
+# patient_form: https://forms.gle/J52XYm9W3hqR64NY6
+
+# Add the following lines if not already present
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/login/'
