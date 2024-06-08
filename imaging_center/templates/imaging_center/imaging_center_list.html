@@ -1,0 +1,10 @@
+{% extends 'imaging_center/base.html' %}
+
+{% block content %}
+<h2>Imaging Centers</h2>
+<ul>
+    {% for center in centers %}
+    <li>{{ center.name }} - {{ center.location }} - <a href="{% url 'imaging_center_detail' center.id %}">Details</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}
