@@ -1,0 +1,14 @@
+{% extends 'imaging_center/base.html' %}
+
+{% block content %}
+<h2>{{ center.name }}</h2>
+<p><strong>Location:</strong> {{ center.location }}</p>
+<p><strong>Services:</strong> {{ center.services }}</p>
+<p><strong>Operational Hours:</strong> {{ center.operational_hours }}</p>
+<p><strong>Contact Info:</strong> {{ center.contact_info }}</p>
+<a href="{% url 'imaging_center_update' center.id %}">Edit</a>
+<form action="{% url 'imaging_center_delete' center.id %}" method="post">
+    {% csrf_token %}
+    <button type="submit">Delete</button>
+</form>
+{% endblock %}
