@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
+import sys
 import os
 from pathlib import Path
 from datetime import timedelta
@@ -27,7 +28,7 @@ DEBUG = True
 
 NGROK_HOST = "6fe0-5-216-98-58.ngrok-free.app"
 
-ALLOWED_HOSTS = ['localhost', NGROK_HOST, ]
+ALLOWED_HOSTS = ['localhost', NGROK_HOST, "127.0.0.1"]
 
 # Application definition
 
@@ -171,7 +172,6 @@ SIMPLE_JWT = {
 
 NESHAN_API_KEY = "service.0b50a4b3134245198429fe4d937681a0"
 
-import sys
 
 sys.path.append("..")
 sys.path.append(".")
