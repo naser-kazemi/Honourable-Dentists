@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'users',
     'appointments',
     'services',
+    'imaging_center',
 
     'rest_framework',
     'rest_framework_simplejwt',

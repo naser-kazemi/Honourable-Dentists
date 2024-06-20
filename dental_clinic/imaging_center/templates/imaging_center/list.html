@@ -1,0 +1,11 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Imaging Centers</h2>
+<ul>
+    {% for center in object_list %}
+    <li><a href="{% url 'center_detail' center.id %}">{{ center.name }}</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}
