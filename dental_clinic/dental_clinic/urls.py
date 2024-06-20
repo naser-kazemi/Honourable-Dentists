@@ -23,6 +23,7 @@ urlpatterns = [
     path('api/users/', include('users.urls')),
     path('api/appointments/', include('appointments.urls')),
     path('api/imaging_center/', include('imaging_center.urls')),
+    path('api/donation/', include('donation.urls')),
     path('api/services/', include('services.urls')),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
