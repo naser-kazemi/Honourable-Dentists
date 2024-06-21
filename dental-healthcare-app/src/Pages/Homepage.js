@@ -34,6 +34,7 @@ const Homepage = () => (
                                         <NavItem label="About" to="/about" />
                                         <NavItem label="Services" to="/services" />
                                         <NavItem label="Contact" to="/contact" />
+                                        <NavItem label="Donate" to="/donation" />
                                     </div>
                                 </div>
                             </div>
