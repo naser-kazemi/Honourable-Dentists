@@ -14,6 +14,7 @@ import TechnicianRegistration from "./Pages/TechnicianRegistration";
 import { AuthProvider } from './AuthContext';
 
 import PatientDashboard from "./Pages/PatientDashboard";
+import TechnicianDashboard from "./Pages/TechnicianDashboard";
 import AppointmentDetail from "./Pages/AppointmentDetail"
 import PatientEditProfile from "./Pages/EditProfile";
 import MakeAppointment from "./Pages/MakeAppointment";
@@ -48,6 +49,7 @@ const App = () => {
                     <Route path="/patientdashboard/medicalrecord" element={<MedicalRecord />} />
                     <Route path="/dentistdashboard" element={<DentistDashboard />} />
                     <Route path="/dentistdashboard/patientshistory" element={<PatientsHistory />} />
+                    <Route path="/techniciandashboard" element={<TechnicianDashboard />} />
                 </Routes>
             </Router>
         </AuthProvider>
