@@ -39,3 +39,11 @@ class TechnicianProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     certification_number = models.CharField(max_length=50)
     email = models.EmailField(unique=True)
+
+
+class RadiologyImage(models.Model):
+    patient = models.ForeignKey(PatientProfile, on_delete=models.CASCADE, related_name='radiology_images')
+    image = models.ImageField(upload_to='radiology_images/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    technician = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={'is_technician': True})
+

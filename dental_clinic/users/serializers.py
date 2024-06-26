@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .models import PatientProfile, DentistProfile
+from .models import PatientProfile, DentistProfile, TechnicianProfile
 
 User = get_user_model()
 
@@ -28,3 +28,11 @@ class DentistProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = DentistProfile
         fields = ['user', 'medical_council_number']
+
+
+class TechnicianProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
+    class Meta:
+        model = TechnicianProfile
+        fields = ['user', 'certification_number']
