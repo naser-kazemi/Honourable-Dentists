@@ -1,0 +1,35 @@
+.container {
+    @apply flex justify-center items-center px-16 py-20 bg-gray-100 max-md:px-5;
+}
+
+.appointmentBox {
+    @apply flex flex-col justify-center mt-16 max-w-full w-[768px] max-md:mt-10;
+}
+
+.appointmentDetails {
+    @apply flex flex-col justify-center px-6 py-7 bg-white rounded-lg shadow-md max-md:px-5 max-md:max-w-full;
+}
+
+.header {
+    @apply justify-center self-start ml-4 text-3xl font-semibold leading-9 text-center text-gray-700 max-md:ml-2.5;
+}
+
+.selector {
+    @apply flex flex-col justify-center py-0.5 text-sm font-medium leading-5 text-gray-700 max-md:max-w-full;
+}
+
+.inputField {
+    @apply shrink-0 mt-2.5 bg-white rounded-md shadow-sm h-[21px] max-md:max-w-full;
+}
+
+.descriptionBox {
+    @apply justify-center pt-1.5 pb-20 mt-2.5 text-base leading-6 bg-white rounded-md shadow-sm text-zinc-400 max-md:max-w-full;
+}
+
+.confirmButtonContainer {
+    @apply flex flex-col justify-center self-end mt-6 max-w-full text-sm font-medium leading-5 text-center text-white w-[191px];
+}
+
+.confirmButton {
+    @apply justify-center px-7 py-3 bg-indigo-600 rounded-md max-md:px-5;
+}

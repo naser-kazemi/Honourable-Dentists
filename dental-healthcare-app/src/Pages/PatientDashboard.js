@@ -26,10 +26,12 @@ const UpcomingAppointment = ({ doctor, specialty, date, time }) => (
     </div>
 );
 
-const QuickLink = ({ src, alt, label }) => (
+const QuickLink = ({ src, alt, label, to }) => (
     <div
         className="flex flex-col flex-1 grow shrink-0 justify-center items-center py-5 px-5 bg-white rounded-lg shadow basis-0 w-fit max-md:px-5">
-        <img alt={alt} loading="lazy" src={src} className="self-center w-6 aspect-square" />
+        <a href={to}>
+            <img alt={alt} loading="lazy" src={src} className="self-center w-6 aspect-square" />
+        </a>
         <div className="justify-center self-start mt-3.5">{label}</div>
     </div>
 );
@@ -66,7 +68,7 @@ function PatientDashboard() {
                             <nav className="flex gap-5 justify-between w-full max-md:flex-wrap max-md:max-w-full">
                                 <div className="flex gap-0 max-md:flex-wrap">
                                     <div className="flex flex-col py-5 text-xl font-semibold leading-7 text-black">
-                                        <div className="justify-center"><img src="logo_mark.png" alt="Logo"
+                                        <div className="justify-center"><img src="/logo_mark.png" alt="Logo"
                                             className="w-12" />
                                         </div>
                                     </div>
@@ -116,6 +118,7 @@ function PatientDashboard() {
                                                 specialty="General Dentistry"
                                                 date="March 30, 2023"
                                                 time="10:00 AM"
+                                                to="/patientdashboard/appointmentdetail"
                                             />
                                         </div>
                                     </article>
@@ -132,6 +135,7 @@ function PatientDashboard() {
                                                         src="https://cdn.builder.io/api/v1/image/assets/TEMP/241050a72cf7a70b7d6bd9ae49b41c54c451b7135dd10214e17252a83a7cfe87?apiKey=0b32f1c6b149400da7ee52316f29de76&"
                                                         alt=""
                                                         label="Book Appointment"
+                                                        to="/patientdashboard/makeappointment"
                                                     />
                                                     <QuickLink
                                                         src="https://cdn.builder.io/api/v1/image/assets/TEMP/43db1707a3936df488779fc536309cc097833044ec6af5073e75a932966ef411?apiKey=0b32f1c6b149400da7ee52316f29de76&"
@@ -144,11 +148,13 @@ function PatientDashboard() {
                                                         src="https://cdn.builder.io/api/v1/image/assets/TEMP/8dd46794fa6c450d5518d3c3b6e4c4eaa892283077da98a6f530c00f855f12b3?apiKey=0b32f1c6b149400da7ee52316f29de76&"
                                                         alt=""
                                                         label="Edit Profile"
+                                                        to="/patientdashboard/editprofile"
                                                     />
                                                     <QuickLink
                                                         src="https://cdn.builder.io/api/v1/image/assets/TEMP/12685ad3b87606542050dd94cd2d33c5c8a47e6ce3fd58df66fd0dc426b5fe6c?apiKey=0b32f1c6b149400da7ee52316f29de76&"
                                                         alt=""
                                                         label="Medical Records"
+                                                        to="/patientdashboard/medicalrecord"
                                                     />
                                                 </div>
                                             </div>
