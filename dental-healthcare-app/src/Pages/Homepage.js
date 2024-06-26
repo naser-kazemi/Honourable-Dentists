@@ -64,7 +64,11 @@ const Homepage = () => (
                         className="flex gap-4 justify-center items-start px-20 pt-4 mt-4 text-base font-semibold leading-6 text-indigo-600">
                         <Button text="I'm a Patient" />
                         <Button text="I'm a Dentist" />
-                        <Button text="I'm a Radiology Center" />
+                        <Button text="I'm a Technician" />
+                    </div>
+                    <div
+                        className="flex gap-4 justify-center items-start px-20 pt-4 mt-4 text-base font-semibold leading-6 text-indigo-600">
+                        <Button text="Check the imaging centers" to={"/centersinfo"} />
                     </div>
                 </div>
             </div>

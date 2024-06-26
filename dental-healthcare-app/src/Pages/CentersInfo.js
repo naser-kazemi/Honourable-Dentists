@@ -11,12 +11,7 @@ function FormInput({ id, label }) {
     );
 }
 
-function ImagingCenterDetails({name, address, phone, operational_hours}) {
-    const centers = [
-        { name: "City Imaging", address: "123 Main St, YourCity", phone: "123-456-7890" },
-        { name: "HealthScan Plus", address: "456 Center Rd, BestTown", phone: "987-654-3210" }
-    ];
-
+function ImagingCenterDetails({ centers }) {
     return (
         <div className="mt-5">
             <h3 className="text-xl font-semibold mb-3">List of Centers</h3>
@@ -31,7 +26,12 @@ function ImagingCenterDetails({name, address, phone, operational_hours}) {
     );
 }
 
+
 function CenterInfo() {
+    const centers = [
+        { name: "City Imaging", address: "123 Main St, YourCity", phone: "123-456-7890" },
+        { name: "HealthScan Plus", address: "456 Center Rd, BestTown", phone: "987-654-3210" }
+    ];
     return (
         <div className="flex flex-col">
             <header className="flex flex-col bg-gray-100">
@@ -70,7 +70,7 @@ function CenterInfo() {
                         <h2 className="justify-center px-9 text-3xl font-extrabold leading-9 text-gray-900 max-md:px-5 max-md:max-w-full">
                             Verified Imaging Centers
                         </h2>
-                        <ImagingCenterDetails />
+                        <ImagingCenterDetails centers={centers} />
                     </div>
                 </section>
             </main>
