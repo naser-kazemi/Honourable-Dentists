@@ -10,7 +10,7 @@ from .views import (PatientProfileListCreateView,
                     CustomLoginView,
                     patient_dashboard,
                     dentist_dashboard,
-                    upload_image
+                    upload_image, register_patient_form
                     )
 
 urlpatterns = [
@@ -18,6 +18,7 @@ urlpatterns = [
     path('dentists/', DentistProfileListCreateView.as_view(), name='dentist-list-create'),
     path('update-geocode/', update_geocode, name='update-geocode'),
     path('create/', create_user_from_form, name='create-user-from-form'),
+    path('register/patient_form/', register_patient_form, name='register-patient-form'),
     path('register/patient/', register_patient, name='register-patient'),
     path('register/dentist/', register_dentist, name='register-dentist'),
     path('register/technician/', register_technician, name='register-technician'),

@@ -1,4 +1,5 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { NavItem } from "../Components/NavItem";
 
 
@@ -59,6 +60,26 @@ const AppointmentHistory = ({ doctor, specialty, date, report }) => (
 );
 
 function PatientDashboard() {
+
+    const [profile, setProfile] = useState(null);
+    const [appointments, setAppointments] = useState([]);
+    const [appointmentHistory, setAppointmentHistory] = useState([]);
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const response = await axios.get('http://localhost:8000/api/current_user_profile/');
+                setProfile(response.data);
+                setAppointments(response.data.appointments.filter(appointment => new Date(appointment.date) >= new Date()));
+                setAppointmentHistory(response.data.appointments.filter(appointment => new Date(appointment.date) < new Date()));
+            } catch (error) {
+                console.error('There was an error fetching the profile data!', error);
+            }
+        };
+
+        fetchProfile();
+    }, []);
+
     return (
         <>
             <header className="flex flex-col bg-gray-100">
@@ -166,7 +187,7 @@ function PatientDashboard() {
                     </main>
                     <section className="flex ml-6 mr-6 flex-col justify-center py-1 mt-7 max-md:max-w-full">
                         <h2 className="justify-center self-start text-xl font-semibold leading-7 text-gray-700">
-                            Medical Records
+                            Appointments History
                         </h2>
                         <AppointmentHistory
                             doctor="Dr. Jane Smith"

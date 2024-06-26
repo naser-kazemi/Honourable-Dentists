@@ -28,7 +28,13 @@ DEBUG = True
 
 NGROK_HOST = "6fe0-5-216-98-58.ngrok-free.app"
 
-ALLOWED_HOSTS = ['localhost', NGROK_HOST, "127.0.0.1"]
+ALLOWED_HOSTS = ['localhost', NGROK_HOST, "127.0.0.1", ]
+
+CSRF_TRUSTED_ORIGINS = ['http://*', 'https://*']
+
+CSRF_COOKIE_SECURE = False
+
+SESSION_COOKIE_SECURE = False
 
 # Application definition
 

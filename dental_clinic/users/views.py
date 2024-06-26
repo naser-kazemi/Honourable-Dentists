@@ -1,3 +1,4 @@
+import json
 from copy import deepcopy
 
 from django.contrib.auth import authenticate, login
@@ -7,7 +8,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.http import HttpResponseForbidden
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 from django.views import View
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -32,9 +35,56 @@ from datetime import datetime
 
 # Create your views here.
 
+
 class PatientProfileListCreateView(generics.ListCreateAPIView):
     queryset = PatientProfile.objects.all()
     serializer_class = PatientProfileSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            data = serializer.validated_data['user']
+            print(data)
+            password = data.get('password')
+            password_repeat = serializer.validated_data.get('password_repeat')
+            validate_password(password, password_repeat)
+
+            user = User.objects.create(
+                username=data.get('username', ''),
+                first_name=data.get('first_name', ''),
+                last_name=data.get('last_name', ''),
+                address=data.get('address', ''),
+                province=data.get('province', 'تهران'),
+                city=data.get('city', 'تهران'),
+                phone_number=data.get('phone_number', '+980000000000'),
+                is_patient=True,
+                is_dentist=False
+            )
+
+            user.set_password(password)
+            user.save()
+
+            PatientProfile.objects.create(
+                user=user,
+                national_id=data.get('national_id', '6816545087'),
+                birth_date=data.get('birth_date', timezone.now().date())
+            )
+
+            if user.address:
+                try:
+                    latitude, longitude = get_geocode(user.address, settings.NESHAN_API_KEY)
+                    user.location_latitude = latitude
+                    user.location_longitude = longitude
+                    user.save()
+                except ValueError as e:
+                    messages.error(request, str(e))
+                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            messages.success(request, 'Patient registered successfully!')
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class DentistProfileListCreateView(generics.ListCreateAPIView):
@@ -115,11 +165,17 @@ def create_user_from_form(request):
     return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
 
 
-def register_patient(request):
+@csrf_exempt
+def register_patient_form(request):
     if request.method == 'POST':
         form = PatientRegistrationForm(request.POST)
+        print(form)
         if form.is_valid():
+            print("0000000000000alsnnaosk[dakmsnljdka[okdfnqpewkv'n;'ewprqfjn;qewrf'")
             data = form.cleaned_data
+            print("==================")
+            print(data)
+            print("==================")
             password = data.get('password')
             password_repeat = data.get('password_repeat')
             try:
@@ -129,13 +185,13 @@ def register_patient(request):
                 return render(request, 'register_patient.html', {'form': form})
 
             user = User.objects.create(
-                username=data['username'],
-                first_name=data['first_name'],
-                last_name=data['last_name'],
-                address=data['address'],
-                province=data['province'],
-                city=data['city'],
-                phone_number=data['phone_number'],
+                username=data.get('username', ''),
+                first_name=data.get('first_name', ''),
+                last_name=data.get('last_name', ''),
+                address=data.get('address', ''),
+                province=data.get('province', 'تهران'),
+                city=data.get('city', 'تهران'),
+                phone_number=data.get('phone_number', '+980000000000'),
                 is_patient=True,
                 is_dentist=False
             )
@@ -145,8 +201,8 @@ def register_patient(request):
 
             PatientProfile.objects.create(
                 user=user,
-                national_id=data['national_id'],
-                birth_date=data['birth_date']
+                national_id=data.get('national_id', '6816545087'),
+                birth_date=data.get('birth_date', timezone.now().date())
             )
 
             if user.address:
@@ -166,6 +222,58 @@ def register_patient(request):
     return render(request, 'register_patient.html', {'form': form})
 
 
+@csrf_exempt
+def register_patient(request):
+    if request.method == 'POST':
+        print("0000000000000alsnnaosk[dakmsnljdka[okdfnqpewkv'n;'ewprqfjn;qewrf'")
+        # print(request.body)
+        data = json.loads(request.body)
+        print("==================")
+        print(data)
+        print("==================")
+        password = data.get('password')
+        password_repeat = data.get('password_repeat')
+        try:
+            validate_password(password, password_repeat)
+        except ValidationError as e:
+            print(e)
+            return
+
+        user = User.objects.create(
+            username=data.get('username', ''),
+            first_name=data.get('first_name', ''),
+            last_name=data.get('last_name', ''),
+            address=data.get('address', ''),
+            province=data.get('province', 'تهران'),
+            city=data.get('city', 'تهران'),
+            phone_number=data.get('phone_number', '+980000000000'),
+            is_patient=True,
+            is_dentist=False
+        )
+
+        user.set_password(password)
+        user.save()
+
+        PatientProfile.objects.create(
+            user=user,
+            national_id=data.get('national_id', '6816545087'),
+            birth_date=data.get('birth_date', timezone.now().date())
+        )
+
+        if user.address:
+            try:
+                latitude, longitude = get_geocode(user.address, settings.NESHAN_API_KEY)
+                user.location_latitude = latitude
+                user.location_longitude = longitude
+                user.save()
+            except ValueError as e:
+                messages.error(request, str(e))
+
+        print(user)
+
+        messages.success(request, 'Patient registered successfully!')
+
+
 def register_dentist(request):
     if request.method == 'POST':
         form = DentistRegistrationForm(request.POST)
@@ -180,13 +288,13 @@ def register_dentist(request):
                 return render(request, 'register_dentist.html', {'form': form})
 
             user = User.objects.create(
-                username=data['username'],
-                first_name=data['first_name'],
-                last_name=data['last_name'],
-                address=data['address'],
-                province=data['province'],
-                city=data['city'],
-                phone_number=data['phone_number'],
+                username=data.get('username', ''),
+                first_name=data.get('first_name', ''),
+                last_name=data.get('last_name', ''),
+                address=data.get('address', ''),
+                province=data.get('province', ''),
+                city=data.get('city', ''),
+                phone_number=data.get('phone_number', ''),
                 is_patient=False,
                 is_dentist=True
             )
@@ -196,8 +304,8 @@ def register_dentist(request):
 
             DentistProfile.objects.create(
                 user=user,
-                medical_council_number=data['medical_council_number'],
-                email=data['email']
+                medical_council_number=data.get('medical_council_number', ''),
+                email=data.get('email', '')
             )
 
             if user.address:
@@ -232,14 +340,14 @@ def register_technician(request):
                 return render(request, 'register_dentist.html', {'form': form})
 
             user = User.objects.create(
-                username=data['username'],
-                email=data['email'],
-                first_name=data['first_name'],
-                last_name=data['last_name'],
-                address=data['address'],
-                province=data['province'],
-                city=data['city'],
-                phone_number=data['phone_number'],
+                username=data.get('username', ''),
+                first_name=data.get('first_name', ''),
+                last_name=data.get('last_name', ''),
+                address=data.get('address', ''),
+                province=data.get('province', ''),
+                city=data.get('city', ''),
+                phone_number=data.get('phone_number', ''),
+                email=data.get('email', '')
             )
 
             user.is_technician = True
