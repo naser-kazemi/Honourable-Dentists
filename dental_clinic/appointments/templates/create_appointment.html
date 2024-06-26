@@ -1,0 +1,73 @@
+{% extends 'base_appointment.html' %}
+
+{% block title %}Create Appointment{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-calendar-plus"></i> Create Appointment
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        {{ form.service.label_tag }}
+                        {{ form.service }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.dentist.label_tag }}
+                        {{ form.dentist }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.date.label_tag }}
+                        {{ form.date }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.time.label_tag }}
+                        {{ form.time }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.description.label_tag }}
+                        {{ form.description }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.pain_level.label_tag }}
+                        {{ form.pain_level }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.status.label_tag }}
+                        {{ form.status }}
+                    </div>
+                    <div class="form-check mb-3">
+                        {{ form.follow_up_needed.label_tag }}
+                        {{ form.follow_up_needed }}
+                    </div>
+                    <div class="mb-3" id="follow_up_description_div">
+                        {{ form.follow_up_description.label_tag }}
+                        {{ form.follow_up_description }}
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-save"></i> Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function toggleFollowUpDescription(checkbox) {
+        var followUpDescriptionDiv = document.getElementById('follow_up_description_div');
+        if (checkbox.checked) {
+            followUpDescriptionDiv.style.display = 'block';
+        } else {
+            followUpDescriptionDiv.style.display = 'none';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var followUpNeededCheckbox = document.querySelector('input[name="follow_up_needed"]');
+        toggleFollowUpDescription(followUpNeededCheckbox);
+    });
+</script>
+{% endblock %}
+

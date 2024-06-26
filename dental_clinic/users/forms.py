@@ -2,6 +2,8 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate
+from django.utils import timezone
+
 from .models import User, PatientProfile, DentistProfile
 from .validators import validate_national_id
 
@@ -28,7 +30,13 @@ class UserRegistrationForm(forms.ModelForm):
 class PatientRegistrationForm(UserRegistrationForm):
     national_id = forms.CharField(max_length=20, validators=[validate_national_id],
                                   widget=forms.TextInput(attrs={'class': 'form-control'}))
-    birth_date = forms.DateField(widget=forms.SelectDateWidget(attrs={'class': 'form-control'}))
+    birth_date = forms.DateField(
+        widget=forms.SelectDateWidget(
+            years=range(1900, timezone.now().year + 1),
+            attrs={'class': 'form-control'}
+        ),
+        initial=timezone.now().date()
+    )
 
     class Meta(UserRegistrationForm.Meta):
         model = User

@@ -120,7 +120,6 @@ def register_patient(request):
 
             user = User.objects.create(
                 username=data['username'],
-                email=data['email'],
                 first_name=data['first_name'],
                 last_name=data['last_name'],
                 address=data['address'],
@@ -172,7 +171,6 @@ def register_dentist(request):
 
             user = User.objects.create(
                 username=data['username'],
-                email=data['email'],
                 first_name=data['first_name'],
                 last_name=data['last_name'],
                 address=data['address'],

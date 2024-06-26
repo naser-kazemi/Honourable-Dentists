@@ -174,7 +174,6 @@ SIMPLE_JWT = {
 
 NESHAN_API_KEY = "service.0b50a4b3134245198429fe4d937681a0"
 
-
 sys.path.append("..")
 sys.path.append(".")
 
