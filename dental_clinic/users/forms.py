@@ -44,6 +44,15 @@ class DentistRegistrationForm(UserRegistrationForm):
         fields = UserRegistrationForm.Meta.fields + ['medical_council_number', 'email']
 
 
+class TechnicianRegistrationForm(UserRegistrationForm):
+    certification_number = forms.CharField(max_length=50, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control'}))
+
+    class Meta(UserRegistrationForm.Meta):
+        model = User
+        fields = UserRegistrationForm.Meta.fields + ['certification_number', 'email']
+
+
 class CustomLoginForm(forms.Form):
     username = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control'})
