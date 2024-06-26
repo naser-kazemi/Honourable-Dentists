@@ -4,6 +4,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate
 from .models import User, PatientProfile, DentistProfile
 from .validators import validate_national_id
+from .models import RadiologyImage
 
 
 class UserRegistrationForm(forms.ModelForm):
@@ -71,3 +72,9 @@ class CustomLoginForm(forms.Form):
             if not user:
                 raise forms.ValidationError('Invalid username or password.')
         return cleaned_data
+
+
+class RadiologyImageForm(forms.ModelForm):
+    class Meta:
+        model = RadiologyImage
+        fields = ['user_id', 'image']

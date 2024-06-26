@@ -1,7 +1,8 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.http import HttpResponseForbidden
 from django.core.exceptions import ValidationError
 from django.views import View
 from rest_framework import generics, status
@@ -9,7 +10,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from django.conf import settings
-from .models import User, PatientProfile, DentistProfile, TechnicianProfile
+from .models import User, PatientProfile, DentistProfile, TechnicianProfile, RadiologyImage
 from .serializers import UserSerializer, PatientProfileSerializer, DentistProfileSerializer
 from dental_clinic.utils import get_geocode
 from .validators import validate_password
@@ -17,6 +18,7 @@ from .forms import (PatientRegistrationForm,
                     DentistRegistrationForm,
                     UserRegistrationForm,
                     TechnicianRegistrationForm,
+                    RadiologyImageForm,
                     CustomLoginForm)
 from .validators import validate_password
 from django.contrib.auth.views import LoginView
@@ -279,3 +281,23 @@ def patient_dashboard(request):
 @login_required
 def dentist_dashboard(request):
     return render(request, 'dentist_dashboard.html')
+
+
+@login_required
+def upload_image(request):
+    if not request.user.is_technician:
+        return HttpResponseForbidden("You are not authorized to upload images.")
+    
+    if request.method == 'POST':
+        form = RadiologyImageForm(request.POST, request.FILES)
+        if form.is_valid():
+            radiology_image = form.save(commit=False)
+            radiology_image.technician = request.user
+            patient_id = form.cleaned_data['user_id']
+            patient = get_object_or_404(PatientProfile, id=patient_id)
+            radiology_image.patient = patient
+            radiology_image.save()
+            return redirect('some_view')
+    else:
+        form = RadiologyImageForm()
+    return render(request, 'upload_image.html', {'form': form})

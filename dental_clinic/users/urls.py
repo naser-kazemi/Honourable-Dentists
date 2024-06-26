@@ -10,6 +10,7 @@ from .views import (PatientProfileListCreateView,
                     CustomLoginView,
                     patient_dashboard,
                     dentist_dashboard,
+                    upload_image
                     )
 
 urlpatterns = [
@@ -24,4 +25,5 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(next_page='/login/'), name='logout'),
     path('dashboard/patient/', patient_dashboard, name='patient_dashboard'),
     path('dashboard/dentist/', dentist_dashboard, name='dentist_dashboard'),
+    path('upload-image/', upload_image, name='upload_image'),
 ]
