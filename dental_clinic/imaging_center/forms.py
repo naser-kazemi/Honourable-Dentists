@@ -1,7 +1,7 @@
 from django import forms
-from .models import ImagingCenter
+from .models import RadiologyImage
 
-class ImagingCenterForm(forms.ModelForm):
+class RadiologyImageForm(forms.ModelForm):
     class Meta:
-        model = ImagingCenter
-        fields = '__all__'
+        model = RadiologyImage
+        fields = ['user_id', 'image']

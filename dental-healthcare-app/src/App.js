@@ -4,6 +4,7 @@ import Homepage from "./Pages/Homepage";
 import About from "./Pages/About";
 import Services from "./Pages/Services";
 import Contact from "./Pages/Contact";
+import Donation from "./Pages/Donation";
 import Registration from "./Pages/Registration";
 import Login from "./Pages/Login";
 import PatientRegistration from "./Pages/PatientRegistration";
@@ -30,6 +31,7 @@ const App = () => {
                     <Route path="/about" element={<About />} />
                     <Route path="/services" element={<Services />} />
                     <Route path="/contact" element={<Contact />} />
+                    <Route path="/donation" element={<Donation />} />
                     <Route path="/registerlogin" element={<Registration />} />
                     <Route path="/registerlogin/login" element={<Login />} />
                     <Route path="/registerlogin/patient" element={<PatientRegistration />} />

@@ -4,4 +4,4 @@ from .models import ImagingCenter
 class ImagingCenterSerializer(serializers.ModelSerializer):
     class Meta:
         model = ImagingCenter
-        fields = '__all__'
+        fields = ['id', 'name', 'location', 'services', 'operational_hours']

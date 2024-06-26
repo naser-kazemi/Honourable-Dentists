@@ -1,47 +1,33 @@
-from rest_framework import viewsets
+from django.views.generic import ListView, DetailView
 from .models import ImagingCenter
-from .serializers import ImagingCenterSerializer
+from django.contrib.auth.decorators import login_required
+from .forms import RadiologyImageForm
+from django.shortcuts import render, redirect
+from django.http import HttpResponseForbidden
 
-class ImagingCenterViewSet(viewsets.ModelViewSet):
-    queryset = ImagingCenter.objects.all()
-    serializer_class = ImagingCenterSerializer
 
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import ImagingCenter
-from .forms import ImagingCenterForm
+class ImagingCenterListView(ListView):
+    model = ImagingCenter
+    template_name = 'imaging_center/list.html'
 
-def imaging_center_list(request):
-    centers = ImagingCenter.objects.all()
-    return render(request, 'imaging_center/imaging_center_list.html', {'centers': centers})
 
-def imaging_center_detail(request, pk):
-    center = get_object_or_404(ImagingCenter, pk=pk)
-    return render(request, 'imaging_center/imaging_center_detail.html', {'center': center})
+class ImagingCenterDetailView(DetailView):
+    model = ImagingCenter
+    template_name = 'imaging_center/detail.html'
 
-def imaging_center_create(request):
+
+@login_required
+def upload_image(request):
+    if not request.user.is_technician:
+        return HttpResponseForbidden("You are not authorized to upload images.")
+    
     if request.method == 'POST':
-        form = ImagingCenterForm(request.POST)
+        form = RadiologyImageForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            return redirect('imaging_center_list')
+            radiology_image = form.save(commit=False)
+            radiology_image.technician = request.user
+            radiology_image.save()
+            return redirect('some_view')
     else:
-        form = ImagingCenterForm()
-    return render(request, 'imaging_center/imaging_center_form.html', {'form': form, 'form_title': 'Add New Imaging Center', 'button_text': 'Add'})
-
-def imaging_center_update(request, pk):
-    center = get_object_or_404(ImagingCenter, pk=pk)
-    if request.method == 'POST':
-        form = ImagingCenterForm(request.POST, instance=center)
-        if form.is_valid():
-            form.save()
-            return redirect('imaging_center_detail', pk=center.pk)
-    else:
-        form = ImagingCenterForm(instance=center)
-    return render(request, 'imaging_center/imaging_center_form.html', {'form': form, 'form_title': 'Edit Imaging Center', 'button_text': 'Update'})
-
-def imaging_center_delete(request, pk):
-    center = get_object_or_404(ImagingCenter, pk=pk)
-    if request.method == 'POST':
-        center.delete()
-        return redirect('imaging_center_list')
-    return render(request, 'imaging_center/imaging_center_confirm_delete.html', {'center': center})
+        form = RadiologyImageForm()
+    return render(request, 'imaging_center/upload_image.html', {'form': form})

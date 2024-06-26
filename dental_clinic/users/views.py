@@ -9,13 +9,14 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from django.conf import settings
-from .models import User, PatientProfile, DentistProfile
+from .models import User, PatientProfile, DentistProfile, TechnicianProfile
 from .serializers import UserSerializer, PatientProfileSerializer, DentistProfileSerializer
 from dental_clinic.utils import get_geocode
 from .validators import validate_password
 from .forms import (PatientRegistrationForm,
                     DentistRegistrationForm,
                     UserRegistrationForm,
+                    TechnicianRegistrationForm,
                     CustomLoginForm)
 from .validators import validate_password
 from django.contrib.auth.views import LoginView
@@ -206,6 +207,45 @@ def register_dentist(request):
     else:
         form = DentistRegistrationForm()
     return render(request, 'register_dentist.html', {'form': form})
+
+
+def register_technician(request):
+    if request.method == 'POST':
+        form = TechnicianRegistrationForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            password = data.get('password')
+            password_repeat = data.get('password_repeat')
+
+            try:
+                validate_password(password, password_repeat)
+            except ValidationError as e:
+                form.add_error('password', e)
+                return render(request, 'register_dentist.html', {'form': form})
+
+            user = User.objects.create(
+                username=data['username'],
+                email=data['email'],
+                first_name=data['first_name'],
+                last_name=data['last_name'],
+                address=data['address'],
+                province=data['province'],
+                city=data['city'],
+                phone_number=data['phone_number'],
+            )
+
+            user.is_technician = True
+            user.set_password(password)
+            user.save()
+            TechnicianProfile.objects.create(user=user,
+                                             certification_number=form.cleaned_data.get('certification_number'),
+                                             email=form.cleaned_data.get('email'))
+            messages.success(request, 'Technician registered successfully!')
+
+            return redirect('register_technician.html')
+    else:
+        form = TechnicianRegistrationForm()
+    return render(request, 'register_technician.html', {'form': form})
 
 
 class CustomLoginView(View):

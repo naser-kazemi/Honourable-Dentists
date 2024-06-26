@@ -1,0 +1,17 @@
+{% block content %}
+<form method="post">
+    <label for="donor_name">Name:</label>
+    <input type="text" id="donor_name" name="donor_name" required><br><br>
+    <label for="amount">Donation Amount:</label>
+    <input type="number" id="amount" name="amount" step="0.01" required><br><br>
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required><br><br>
+    <label for="date">Date:</label>
+    <input type="date" id="date" name="date" required><br><br>
+    <label for="is_recurring">Recurring donation:</label>
+    <input type="checkbox" id="is_recurring" name="is_recurring"><br><br>
+    <label for="message">Message (optional):</label>
+    <textarea id="message" name="message"></textarea><br><br>
+    <input type="submit" value="Donate">
+</form>
+{% endblock %}
