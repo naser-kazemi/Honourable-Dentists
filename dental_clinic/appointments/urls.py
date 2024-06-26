@@ -9,8 +9,8 @@ from .views import (AppointmentListCreateView,
 urlpatterns = [
     path('', AppointmentListCreateView.as_view(), name='appointment-list-create'),
     path('appointment/create/', create_appointment, name='create_appointment'),
-    path('appointment/success/', appointment_success, name='appointment_success'),
-    path('appointments/all/', AppointmentListView.as_view(), name='list_appointments'),
+    path('success/', appointment_success, name='appointment_success'),
+    path('all/', AppointmentListView.as_view(), name='list_appointments'),
     path('appointments/today/', TodayAppointmentListView.as_view(), name='today_appointments'),
     path('appointments/<int:pk>/update/', AppointmentUpdateView.as_view(), name='update_appointment'),
 ]

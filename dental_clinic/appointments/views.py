@@ -8,10 +8,13 @@ from .forms import AppointmentForm
 from .models import Appointment, Service, User
 import django_filters
 
+from users.views import CURRENT_USER
+
 
 class IsDentist(permissions.BasePermission):
     def has_permission(self, request, view):
-        return request.user and request.user.is_dentist
+        print(CURRENT_USER, CURRENT_USER['user'].is_dentist)
+        return CURRENT_USER and CURRENT_USER['user'].is_dentist and CURRENT_USER['is_logged_in']
 
 
 class AppointmentFilter(django_filters.FilterSet):
@@ -37,6 +40,8 @@ class AppointmentListCreateView(generics.ListCreateAPIView):
         return AppointmentReadSerializer
 
     def perform_create(self, serializer):
+        if self. request.user.is_anonymous:
+            self.request.user = CURRENT_USER['user']
         serializer.save(patient=self.request.user)
 
 
@@ -45,6 +50,7 @@ class TodayAppointmentListView(generics.ListAPIView):
     permission_classes = [IsDentist]
 
     def get_queryset(self):
+        self.request.user = CURRENT_USER['user']
         today = timezone.now().date()
         return Appointment.objects.filter(date=today, dentist=self.request.user)
 
@@ -56,6 +62,7 @@ class AppointmentListView(generics.ListAPIView):
     filterset_class = AppointmentFilter
 
     def get_queryset(self):
+        self.request.user = CURRENT_USER['user']
         if self.request.user.is_dentist:
             return Appointment.objects.filter(dentist=self.request.user)
         return Appointment.objects.none()
@@ -67,6 +74,7 @@ class AppointmentUpdateView(generics.UpdateAPIView):
     permission_classes = [IsDentist]
 
     def get_queryset(self):
+        self.request.user = CURRENT_USER['user']
         if self.request.user.is_dentist:
             return Appointment.objects.filter(dentist=self.request.user)
         return Appointment.objects.none()
@@ -74,6 +82,8 @@ class AppointmentUpdateView(generics.UpdateAPIView):
 
 @login_required
 def create_appointment(request):
+    if request.user.is_anonymous:
+        request.user = CURRENT_USER['user']
     if request.method == 'POST':
         form = AppointmentForm(request.POST, patient=request.user)
         if form.is_valid():

@@ -20,6 +20,9 @@ class User(AbstractUser):
     location_latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     location_longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
 
+    def __str__(self):
+        return f"{self.first_name}, {self.last_name}, {self.username}"
+
 
 class PatientProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -39,11 +42,4 @@ class TechnicianProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     certification_number = models.CharField(max_length=50)
     email = models.EmailField(unique=True)
-
-
-class RadiologyImage(models.Model):
-    patient = models.ForeignKey(PatientProfile, on_delete=models.CASCADE, related_name='radiology_images')
-    image = models.ImageField(upload_to='radiology_images/')
-    uploaded_at = models.DateTimeField(auto_now_add=True)
-    technician = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={'is_technician': True})
 

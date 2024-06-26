@@ -1,6 +1,6 @@
 from django.db import models
 
-from users.models import User
+from users.models import User, PatientProfile
 
 
 class ImagingCenter(models.Model):
@@ -14,7 +14,7 @@ class ImagingCenter(models.Model):
 
 
 class RadiologyImage(models.Model):
-    technician = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={'is_technician': True})
-    user_id = models.IntegerField()
+    patient = models.ForeignKey(PatientProfile, on_delete=models.CASCADE, related_name='radiology_images')
     image = models.ImageField(upload_to='radiology_images/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
+    technician = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={'is_technician': True})

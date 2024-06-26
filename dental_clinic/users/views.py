@@ -1,5 +1,8 @@
+from copy import deepcopy
+
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import check_password
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.http import HttpResponseForbidden
@@ -10,7 +13,8 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from django.conf import settings
-from .models import User, PatientProfile, DentistProfile, TechnicianProfile, RadiologyImage
+from .models import User, PatientProfile, DentistProfile, TechnicianProfile
+from imaging_center.models import RadiologyImage
 from .serializers import UserSerializer, PatientProfileSerializer, DentistProfileSerializer
 from dental_clinic.utils import get_geocode
 from .validators import validate_password
@@ -18,8 +22,8 @@ from .forms import (PatientRegistrationForm,
                     DentistRegistrationForm,
                     UserRegistrationForm,
                     TechnicianRegistrationForm,
-                    RadiologyImageForm,
                     CustomLoginForm)
+from imaging_center.forms import RadiologyImageForm
 from .validators import validate_password
 from django.contrib.auth.views import LoginView
 
@@ -36,6 +40,9 @@ class PatientProfileListCreateView(generics.ListCreateAPIView):
 class DentistProfileListCreateView(generics.ListCreateAPIView):
     queryset = DentistProfile.objects.all()
     serializer_class = DentistProfileSerializer
+
+
+CURRENT_USER = {'user': User(), 'is_logged_in': False}
 
 
 @api_view(['POST'])
@@ -75,13 +82,14 @@ def create_user_from_form(request):
         first_name=data['first_name'],
         last_name=data['last_name'],
         username=data['username'],
-        password=password,
         province=data['province'],
         city=data['city'],
         address=data['address'],
         phone_number=data['phone_number'],
         is_patient=data['is_patient'],
     )
+
+    user.set_password(password)
 
     if user.is_patient:
         birth_date = data['birth_date']
@@ -261,13 +269,27 @@ class CustomLoginView(View):
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=password)
-            if user is not None:
+            user = authenticate(request, username=username, password=password)
+            if user is not None and check_password(password, user.password):
+                print("\n=====================")
+                print(user, user.is_dentist)
+                print("=====================\n")
+                global CURRENT_USER
+                CURRENT_USER['user'] = deepcopy(user)
+                CURRENT_USER['is_logged_in'] = True
                 login(request, user)
                 if user.is_patient:
+                    print("the user is a patient")
                     return redirect('patient_dashboard')
                 elif user.is_dentist:
+                    print("the user is a dentist")
                     return redirect('dentist_dashboard')
+                elif user.is_technician:
+                    print("the user is a technician")
+                    return redirect('technician_dashboard')
+            else:
+                form.add_error(None, 'Invalid username or password.')
+
         return render(request, self.template_name, {'form': form})
 
 
@@ -285,7 +307,7 @@ def dentist_dashboard(request):
 def upload_image(request):
     if not request.user.is_technician:
         return HttpResponseForbidden("You are not authorized to upload images.")
-    
+
     if request.method == 'POST':
         form = RadiologyImageForm(request.POST, request.FILES)
         if form.is_valid():
