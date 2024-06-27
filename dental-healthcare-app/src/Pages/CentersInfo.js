@@ -1,6 +1,6 @@
 import * as React from "react";
 import { NavItem } from "../Components/NavItem";
-import { Button } from "../Components/Button";
+import { RefButton } from "../Components/Button";
 
 function FormInput({ id, label }) {
     return (

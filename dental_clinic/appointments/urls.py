@@ -1,16 +1,23 @@
 from django.urls import path
 from .views import (AppointmentListCreateView,
-                    create_appointment,
+                    create_appointment_form,
                     appointment_success,
                     AppointmentUpdateView,
-                    TodayAppointmentListView,
-                    AppointmentListView)
+                    DentistAppointmentListView,
+                    DentistTodayAppointmentListView,
+                    PatientTodaysAppointmentsView,
+                    PatientAppointmentsView,
+                    create_appointment
+                    )
 
 urlpatterns = [
     path('', AppointmentListCreateView.as_view(), name='appointment-list-create'),
-    path('appointment/create/', create_appointment, name='create_appointment'),
+    path('createform/', create_appointment_form, name='create_appointment-form'),
+    path('create/', create_appointment, name='create_appointment'),
     path('success/', appointment_success, name='appointment_success'),
-    path('all/', AppointmentListView.as_view(), name='list_appointments'),
-    path('appointments/today/', TodayAppointmentListView.as_view(), name='today_appointments'),
-    path('appointments/<int:pk>/update/', AppointmentUpdateView.as_view(), name='update_appointment'),
+    path('all/dentist', DentistAppointmentListView.as_view(), name='dentist_list_appointments'),
+    path('today/dentist', DentistTodayAppointmentListView.as_view(), name='dentist_today_appointments'),
+    path('<int:pk>/update/', AppointmentUpdateView.as_view(), name='update_appointment'),
+    path('all/patient/', PatientAppointmentsView.as_view(), name='patient_list_appointments'),
+    path('today/patient/', PatientTodaysAppointmentsView.as_view(), name='patient_today_appointments'),
 ]

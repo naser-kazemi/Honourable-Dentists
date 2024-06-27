@@ -1,6 +1,6 @@
 import * as React from "react";
 import { NavItem } from "../Components/NavItem";
-import { Button } from "../Components/Button";
+import { RefButton } from "../Components/Button";
 
 const AppointmentDetailCard = ({ label, value }) => (
     <div className="flex gap-5 justify-center py-6 pr-20 pl-4 max-md:flex-wrap max-md:pr-5 max-md:max-w-full">
@@ -74,7 +74,7 @@ function AppointmentDetail() {
                             <div className="flex gap-5 justify-center py-5 pr-20 pl-4 font-medium bg-white max-md:flex-wrap max-md:pr-5 max-md:max-w-full">
                                 <div className="justify-center self-start mt-1.5 text-gray-500">Radiology Appointment</div>
                                 <div className="flex flex-col justify-center text-center text-white">
-                                    <Button text="Book Radiology Appointment" />
+                                    <RefButton text="Book Radiology Appointment" />
                                 </div>
                             </div>
                         </div>

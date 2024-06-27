@@ -29,7 +29,7 @@ class DentistProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DentistProfile
-        fields = ['user', 'medical_council_number']
+        fields = ['user', 'medical_council_number', 'speciality', 'email']
 
 
 class TechnicianProfileSerializer(serializers.ModelSerializer):

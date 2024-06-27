@@ -16,7 +16,7 @@ import { AuthProvider } from './AuthContext';
 import PatientDashboard from "./Pages/PatientDashboard";
 import TechnicianDashboard from "./Pages/TechnicianDashboard";
 import AppointmentDetail from "./Pages/AppointmentDetail"
-import PatientEditProfile from "./Pages/EditProfile";
+import PatientEditProfile from "./Pages/EditPatientProfile";
 import MakeAppointment from "./Pages/MakeAppointment";
 import RadiologyCenterAppointment from "./Pages/RadiologyCenterAppointment";
 import MedicalRecord from "./Pages/MedicalRecords";
@@ -42,7 +42,7 @@ const App = () => {
                     <Route path="/registerlogin/dentist" element={<DentistRegistration />} />
                     <Route path="/registerlogin/radiology" element={<TechnicianRegistration />} />
                     <Route path="/patientdashboard" element={<PatientDashboard />} />
-                    <Route path="/patientdashboard/editprofile" element={<PatientEditProfile />} />
+                    <Route path="/patientdashboard/editpatientprofile" element={<PatientEditProfile />} />
                     <Route path="/patientdashboard/appointmentdetail" element={<AppointmentDetail />} />
                     <Route path="/patientdashboard/makeappointment" element={<MakeAppointment />} />
                     <Route path="/patientdashboard/radiologyappointment" element={<RadiologyCenterAppointment />} />
