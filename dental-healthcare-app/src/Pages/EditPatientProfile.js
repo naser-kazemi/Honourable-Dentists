@@ -62,16 +62,13 @@ export default function EditProfileForm() {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const response = await axios.get('http://localhost:8000/api/users/current_patient/', {
+                const response = await axios.get('http://localhost:8000/api/users/current_user/', {
                     headers: {
                         'Authorization': `Token ${token}`
                     }
                 });
 
                 console.log('Profile data:', response.data);
-
-                // flatten the response data
-                response.data = { ...response.data, ...response.data.user }
 
                 setProfile(response.data);
             } catch (error) {

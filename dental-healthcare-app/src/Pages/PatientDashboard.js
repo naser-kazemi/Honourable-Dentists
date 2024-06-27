@@ -1,32 +1,42 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from '../AuthContext';
+import { useNavigate } from 'react-router-dom';
 import { NavItem } from "../Components/NavItem";
 
 
-const UpcomingAppointment = ({ doctor, speciality, date, time }) => (
-    <div className="flex mt-5 text-sm leading-5 bg-white rounded-lg shadow max-md:max-w-full">
-        <div className="flex flex-col justify-center w-full px-3.5 py-4 max-md:max-w-full">
-            <div className="flex justify-between pr-6 w-full max-md:flex-wrap max-md:pr-5 max-md:max-w-full">
-                <div className="flex flex-col justify-center py-1">
-                    <div className="justify-center font-semibold text-indigo-600">
-                        {doctor} - {speciality}
+const UpcomingAppointment = ({ id, doctor, speciality, date, time }) => {
+    const navigate = useNavigate();
+
+    const handleViewDetails = () => {
+        navigate(`/appointment/${id}`);
+    };
+
+    return (
+        <div className="flex mt-5 text-sm leading-5 bg-white rounded-lg shadow max-md:max-w-full">
+            <div className="flex flex-col justify-center w-full px-3.5 py-4 max-md:max-w-full">
+                <div className="flex justify-between pr-6 w-full max-md:flex-wrap max-md:pr-5 max-md:max-w-full">
+                    <div className="flex flex-col justify-center py-1">
+                        <div className="justify-center font-semibold text-indigo-600">
+                            {doctor} - {speciality}
+                        </div>
+                        <div className="justify-center mt-2 text-gray-500">
+                            {date} at {time}
+                        </div>
                     </div>
-                    <div className="justify-center mt-2 text-gray-500">
-                        {date} at {time}
+                    <div
+                        className="justify-center self-start mt-1.5 font-semibold text-indigo-600 cursor-pointer"
+                        tabIndex="0"
+                        role="button"
+                        onClick={handleViewDetails}
+                    >
+                        View Details
                     </div>
-                </div>
-                <div
-                    className="justify-center self-start mt-1.5 font-semibold text-indigo-600"
-                    tabIndex="0"
-                    role="button"
-                >
-                    View Details
                 </div>
             </div>
         </div>
-    </div>
-);
+    );
+};
 
 const QuickLink = ({ src, alt, label, to }) => (
     <div
@@ -38,27 +48,36 @@ const QuickLink = ({ src, alt, label, to }) => (
     </div>
 );
 
-const AppointmentHistory = ({ doctor, speciality, date, report }) => (
-    <div className="flex flex-col justify-center mt-5 text-sm leading-5 bg-white rounded-lg shadow max-md:max-w-full">
-        <div className="flex flex-col justify-center w-full px-4 py-4 max-md:max-w-full">
-            <div className="flex gap-5 justify-between w-full pr-4 max-md:flex-wrap max-md:max-w-full">
-                <div className="flex flex-col justify-center py-1 pr-4">
-                    <div className="justify-center font-semibold text-indigo-600">
-                        {doctor} - {speciality}
+const AppointmentHistory = ({ id, doctor, speciality, date, report }) => {
+    const navigate = useNavigate();
+
+    const handleViewDetails = () => {
+        navigate(`/appointment/${id}`);
+    };
+
+    return (
+        <div className="flex flex-col justify-center mt-5 text-sm leading-5 bg-white rounded-lg shadow max-md:max-w-full">
+            <div className="flex flex-col justify-center w-full px-4 py-4 max-md:max-w-full">
+                <div className="flex gap-5 justify-between w-full pr-4 max-md:flex-wrap max-md:max-w-full">
+                    <div className="flex flex-col justify-center py-1 pr-4">
+                        <div className="justify-center font-semibold text-indigo-600">
+                            {doctor} - {speciality}
+                        </div>
+                        <div className="justify-center mt-2.5 text-gray-500">{date}</div>
                     </div>
-                    <div className="justify-center mt-2.5 text-gray-500">{date}</div>
-                </div>
-                <div
-                    className="justify-center self-start mt-1 font-semibold text-indigo-600"
-                    tabIndex="0"
-                    role="button"
-                >
-                    {report}
+                    <div
+                        className="justify-center self-start mt-1 font-semibold text-indigo-600 cursor-pointer"
+                        tabIndex="0"
+                        role="button"
+                        onClick={handleViewDetails}
+                    >
+                        {report}
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-);
+    );
+};
 
 function PatientDashboard() {
 
@@ -73,7 +92,7 @@ function PatientDashboard() {
         const fetchProfile = async () => {
             try {
                 console.log(token)
-                const response = await axios.get('http://localhost:8000/api/users/current_patient/',
+                const response = await axios.get('http://localhost:8000/api/users/current_user/',
                     {
                         headers: {
                             'Authorization': `Token ${token}`
@@ -181,6 +200,7 @@ function PatientDashboard() {
                                             {todaysAppointments.map(appointment => (
                                                 <AppointmentHistory
                                                     key={appointment.id}
+                                                    id={appointment.id}
                                                     doctor={appointment.dentist}
                                                     speciality={appointment.speciality}
                                                     date={appointment.date}
@@ -237,6 +257,7 @@ function PatientDashboard() {
                         {appointments.map(appointment => (
                             <UpcomingAppointment
                                 key={appointment.id}
+                                id={appointment.id}
                                 doctor={appointment.dentist}
                                 speciality={appointment.speciality}
                                 date={appointment.date}

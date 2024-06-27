@@ -17,3 +17,9 @@ class ServiceListCreateView(generics.ListCreateAPIView):
     queryset = Service.objects.all()
     serializer_class = ServiceSerializer
     filterset_class = ServiceFilter
+
+
+class ServiceRetrieveUpdate(generics.RetrieveUpdateAPIView):
+    queryset = Service.objects.all()
+    serializer_class = ServiceSerializer
+    filterset_class = ServiceFilter

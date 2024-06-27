@@ -7,7 +7,8 @@ from .views import (AppointmentListCreateView,
                     DentistTodayAppointmentListView,
                     PatientTodaysAppointmentsView,
                     PatientAppointmentsView,
-                    create_appointment
+                    create_appointment,
+                    appointment_detail_view,
                     )
 
 urlpatterns = [
@@ -20,4 +21,5 @@ urlpatterns = [
     path('<int:pk>/update/', AppointmentUpdateView.as_view(), name='update_appointment'),
     path('all/patient/', PatientAppointmentsView.as_view(), name='patient_list_appointments'),
     path('today/patient/', PatientTodaysAppointmentsView.as_view(), name='patient_today_appointments'),
+    path('<int:appointment_id>/', appointment_detail_view, name='appointment-detail'),
 ]

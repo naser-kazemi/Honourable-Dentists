@@ -1,19 +1,51 @@
-import * as React from "react";
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
 import { NavItem } from "../Components/NavItem";
 import { RefButton } from "../Components/Button";
 
 const AppointmentDetailCard = ({ label, value }) => (
     <div className="flex gap-5 justify-center py-6 pr-20 pl-4 max-md:flex-wrap max-md:pr-5 max-md:max-w-full">
-        <div className="justify-center font-medium text-gray-500">{label}</div>
-        <div className="justify-center text-gray-900">{value}</div>
+        <div className="justify-left font-medium text-gray-500">{label}</div>
+        <div className="justify-right text-gray-900">{value}</div>
     </div>
 );
 
 function AppointmentDetail() {
+    const { id } = useParams();
+    const token = localStorage.getItem('token');
+    const [appointment, setAppointment] = useState(null);
+
+    useEffect(() => {
+        const fetchAppointment = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8000/api/appointments/${id}/`, {
+                    headers: {
+                        'Authorization': `Token ${token}`
+                    }
+                });
+                console.log(response.data);
+                setAppointment(response.data);
+            } catch (error) {
+                console.error('There was an error fetching the appointment details!', error);
+            }
+        };
+
+        fetchAppointment();
+    }, [id, token]);
+
+    if (!appointment) {
+        return <div>Loading...</div>;
+    }
+
     const appointmentDetails = [
-        { label: "Appointment Description", value: "General dental checkup and cleaning." },
-        { label: "Status", value: "Completed" },
-        { label: "Follow Up Needed", value: "Yes, an X-ray is required." },
+        { label: "Dentist", value: appointment.dentist },
+        { label: "Specialty", value: appointment.speciality },
+        { label: "Date", value: appointment.date },
+        { label: "Time", value: appointment.time },
+        { label: "Description", value: appointment.description },
+        { label: "Follow Up", value: appointment.follow_up },
+        { label: "Pain Level", value: appointment.pain_level },
     ];
 
     return (
@@ -73,9 +105,8 @@ function AppointmentDetail() {
                             ))}
                             <div className="flex gap-5 justify-center py-5 pr-20 pl-4 font-medium bg-white max-md:flex-wrap max-md:pr-5 max-md:max-w-full">
                                 <div className="justify-center self-start mt-1.5 text-gray-500">Radiology Appointment</div>
-                                <div className="flex flex-col justify-center text-center text-white">
-                                    <RefButton text="Book Radiology Appointment" />
-                                </div>
+
+                                <RefButton text="Book Radiology Appointment" />
                             </div>
                         </div>
                     </div>

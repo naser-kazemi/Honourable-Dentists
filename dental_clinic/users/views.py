@@ -493,7 +493,7 @@ def upload_image(request):
         radiology_image = request.FILES.get('image')
         patient_id = request.POST.get('user_id')
         patient = get_object_or_404(PatientProfile, national_id=patient_id)
-        
+
         radiology_image_instance = RadiologyImage.objects.create(
             user_id=patient_id,
             patient=patient,
@@ -503,13 +503,12 @@ def upload_image(request):
         return render(request, 'base_user.html')
 
 
-
-class CurrentPatientProfileView(generics.RetrieveUpdateAPIView):
-    serializer_class = PatientProfileSerializer
+class CurrentUserProfileView(generics.RetrieveUpdateAPIView):
+    serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
-        return PatientProfile.objects.get(user=self.request.user)
+        return User.objects.get(username=self.request.user.username)
 
 
 @csrf_exempt

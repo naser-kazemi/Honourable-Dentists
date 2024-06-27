@@ -192,3 +192,23 @@ def create_appointment(request):
             return Response({'message': 'Appointment created successfully!'}, status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def appointment_detail_view(request, appointment_id):
+    try:
+        appointment = Appointment.objects.get(id=appointment_id, patient=request.user)
+        serializer = AppointmentReadSerializer(appointment)
+        data = serializer.data
+        patient = User.objects.get(user_id=data['patient'])
+        data['patient'] = f"{patient.first_name} {patient.last_name}"
+        dentist = User.objects.get(user_id=data['dentist'])
+        data['dentist'] = f"Dr. {dentist.first_name} {dentist.last_name}"
+        dentist_profile = DentistProfile.objects.get(user=dentist)
+        data['speciality'] = f"{dentist_profile.speciality}"
+        data['follow_up'] = f'{"Yes" if appointment.follow_up_needed else "No"}. {appointment.follow_up_description}'
+        data["status"] = "In progress" if data["status"] else "Completed"
+        return Response(data, status=status.HTTP_200_OK)
+    except Appointment.DoesNotExist:
+        return Response({'error': 'Appointment not found or you do not have permission to view it.'},
+                        status=status.HTTP_404_NOT_FOUND)

@@ -13,7 +13,7 @@ from .views import (PatientProfileListCreateView,
                     upload_image,
                     register_patient_form,
                     login_user,
-                    CurrentPatientProfileView,
+                    CurrentUserProfileView,
                     update_patient,
                     )
 
@@ -30,7 +30,7 @@ urlpatterns = [
     path('login/', login_user, name='login'),
     path('logout/', LogoutView.as_view(next_page='/login/'), name='logout'),
     path('dashboard/patient/', patient_dashboard, name='patient_dashboard'),
-    path('current_patient/', CurrentPatientProfileView.as_view(), name='patient_dashboard'),
+    path('current_user/', CurrentUserProfileView.as_view(), name='current_user'),
     path('update_current_patient/', update_patient, name='update_patient'),
     path('dashboard/dentist/', dentist_dashboard, name='dentist_dashboard'),
     path('upload-image/', upload_image, name='upload_image'),
