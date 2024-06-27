@@ -2,6 +2,47 @@ import * as React from "react";
 import { NavItem } from "../Components/NavItem";
 
 function TechnicianDashboard() {
+    const [patientId, setPatientId] = useState('');
+    const [file, setFile] = useState(null);
+
+    const handlePatientIdChange = (event) => {
+        setPatientId(event.target.value);
+    };
+
+    const handleFileChange = (event) => {
+        setFile(event.target.files[0]);
+    };
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        if (!file || !patientId) {
+            alert('Please enter a patient ID and select a file.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('user_id', patientId);
+        formData.append('image', file);
+
+        try {
+            const response = await fetch('YOUR_DJANGO_BACKEND_URL/api/upload/', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+            console.log(data); // You can handle the response accordingly
+            alert('Upload successful!');
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error uploading file!');
+        }
+    };
+
     return (
         <>
             <header className="flex flex-col bg-gray-100">

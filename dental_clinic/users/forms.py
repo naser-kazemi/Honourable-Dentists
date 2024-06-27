@@ -79,3 +79,9 @@ class CustomLoginForm(forms.Form):
             if not user:
                 raise forms.ValidationError('Invalid username or password.')
         return cleaned_data
+
+
+class RadiologyImageForm(forms.ModelForm):
+    class Meta:
+        model = RadiologyImage
+        fields = ['user_id', 'image']

@@ -43,3 +43,10 @@ class TechnicianProfile(models.Model):
     certification_number = models.CharField(max_length=50)
     email = models.EmailField(unique=True)
 
+
+class RadiologyImage(models.Model):
+    image_id = models.AutoField(primary_key=True)
+    patient = models.ForeignKey(PatientProfile, on_delete=models.CASCADE, related_name='radiology_images')
+    image = models.ImageField(upload_to='radiology_images/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    technician = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={'is_technician': True})
