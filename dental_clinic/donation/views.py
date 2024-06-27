@@ -1,11 +1,11 @@
 from django.shortcuts import render
 from .models import Donation
 
-# Create your views here.
+
 def donation_form(request):
     if request.method == "POST":
-        # Process the form data
-        pass
-    else:
-        # Show empty form
+        data = json.loads(request.body)
+        print('-------->', data)
+        
         return render(request, "donation/donation_form.html")
+

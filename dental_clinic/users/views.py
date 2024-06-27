@@ -17,7 +17,6 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from django.conf import settings
 from .models import User, PatientProfile, DentistProfile, TechnicianProfile
-from imaging_center.models import RadiologyImage
 from .serializers import UserSerializer, PatientProfileSerializer, DentistProfileSerializer
 from dental_clinic.utils import get_geocode
 from .validators import validate_password
@@ -25,8 +24,8 @@ from .forms import (PatientRegistrationForm,
                     DentistRegistrationForm,
                     UserRegistrationForm,
                     TechnicianRegistrationForm,
+                    RadiologyImageForm,
                     CustomLoginForm)
-from imaging_center.forms import RadiologyImageForm
 from .validators import validate_password
 from django.contrib.auth.views import LoginView
 
@@ -325,10 +324,51 @@ def register_dentist(request):
     return render(request, 'register_dentist.html', {'form': form})
 
 
+@csrf_exempt
 def register_technician(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        print('-------->', data)
+
+        password = data.get('password')
+        password_repeat = data.get('password_repeat')
+
+        try:
+            validate_password(password, password_repeat)
+        except ValidationError as e:
+            form.add_error('password', e)
+            return render(request, 'register_technician.html', {'form': form})
+
+        user = User.objects.create(
+            username=data.get('username', ''),
+            first_name=data.get('first_name', ''),
+            last_name=data.get('last_name', ''),
+            address=data.get('address', ''),
+            province=data.get('province', 'تهران'),
+            city=data.get('city', 'تهران'),
+            phone_number=data.get('phone_number', '+980000000000'),
+            is_patient=False,
+            is_dentist=False,
+            is_technician=True,
+        )
+
+        user.set_password(password)
+        user.save()
+
+        TechnicianProfile.objects.create(user=user,
+                                        certification_number=data.get('certification_number'),
+                                        email=data.get('email'))
+
+        messages.success(request, 'Technician registered successfully!')
+        return render(request, 'register_technician.html')
+
+
+@csrf_exempt
+def register_technician_form(request):
     if request.method == 'POST':
         form = TechnicianRegistrationForm(request.POST)
         if form.is_valid():
+            print('here2')
             data = form.cleaned_data
             password = data.get('password')
             password_repeat = data.get('password_repeat')
@@ -360,6 +400,7 @@ def register_technician(request):
 
             return redirect('register_technician.html')
     else:
+        print('here3')
         form = TechnicianRegistrationForm()
     return render(request, 'register_technician.html', {'form': form})
 
@@ -411,7 +452,7 @@ def dentist_dashboard(request):
     return render(request, 'dentist_dashboard.html')
 
 
-@login_required
+@csrf_exempt
 def upload_image(request):
     if not request.user.is_technician:
         return HttpResponseForbidden("You are not authorized to upload images.")
@@ -423,6 +464,7 @@ def upload_image(request):
             radiology_image.technician = request.user
             patient_id = form.cleaned_data['user_id']
             patient = get_object_or_404(PatientProfile, id=patient_id)
+            # print('--------->', patient_id)
             radiology_image.patient = patient
             radiology_image.save()
             return redirect('some_view')
