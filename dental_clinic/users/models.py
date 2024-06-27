@@ -50,4 +50,4 @@ class RadiologyImage(models.Model):
     patient = models.ForeignKey(PatientProfile, on_delete=models.CASCADE, related_name='radiology_images')
     image = models.ImageField(upload_to='radiology_images/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
-    technician = models.ForeignKey(TechnicianProfile, on_delete=models.CASCADE, limit_choices_to={'is_technician': True})
+    # technician = models.ForeignKey(TechnicianProfile, on_delete=models.CASCADE, limit_choices_to={'is_technician': True})

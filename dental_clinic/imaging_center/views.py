@@ -23,7 +23,7 @@ class ImagingCenterDetailView(DetailView):
 def send_imaging_centers(request):
     if request.method == "GET":
         centers = ImagingCenter.objects.all().values()
-        centers_list = list(centers)  
+        centers_list = list(centers)
         return JsonResponse(centers_list, safe=False)  
 
 
@@ -40,4 +40,4 @@ def imaging_center_form(request):
             operational_hours=data.get('operational_hours', ''),
         )
         
-        return render(request, "imaging_center/imaging_center_form.html")
+        return render(request, "imaging_center/list.html")
