@@ -82,7 +82,7 @@ function TechnicianRegistration() {
             alert("Registration successful!");
             nav("/");
         } catch (error) {
-            console.error('There was an error registering the patient!', error);
+            console.error('There was an error registering the Technician!', error);
         }
     };
 

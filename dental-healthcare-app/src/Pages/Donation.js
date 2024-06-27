@@ -30,6 +30,40 @@ function FormInput({ id, label, type, value, onChange }) {
 }
 
 function Donation() {
+    const nav = useNavigate();
+
+
+    const [formData, setFormData] = useState({
+        name: '',
+        amount: '',
+        email: '',
+        recurring: false
+    });
+
+
+    const handleChange = (e) => {
+        const { id, value } = e.target;
+        setFormData({ ...formData, [id]: value });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            const response = await axios.post('http://localhost:8000/api/donation/donate/', {
+                name: formData.name,
+                amount: formData.amount,
+                email: formData.email,
+                is_recurring: formData.recurring
+            });
+            console.log(response.data);
+            alert("Your donation was recieved. Thanks!");
+            nav("/");
+        } catch (error) {
+            console.error('There was an error with your donation!', error);
+        }
+    };
+
     return (
         <div className="flex flex-col">
             <header className="flex flex-col bg-gray-100">
@@ -74,10 +108,10 @@ function Donation() {
                             Donation Form
                         </h2>
                     </div>
-                    <form className="flex flex-col mt-8 text-sm max-md:max-w-full">
-                        <FormInput id="name" label="Name" />
-                        <FormInput id="amount" label="Donation Amount" />
-                        <FormInput id="email" label="Email Address" />
+                    <form className="flex flex-col mt-8 text-sm max-md:max-w-full" onSubmit={handleSubmit}>
+                        <FormInput id="name" label="Name" value={formData.name} onChange={handleChange} />
+                        <FormInput id="amount" label="Donation Amount" value={formData.amount} onChange={handleChange} />
+                        <FormInput id="email" label="Email Address" value={formData.email} onChange={handleChange} />
                         <div
                             className="flex flex-col justify-center items-start mt-6 leading-5 text-gray-600 max-md:pr-5 max-md:max-w-full">
                             <div className="flex gap-0 items-center">
