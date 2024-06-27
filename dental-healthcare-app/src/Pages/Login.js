@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { useAuth } from '../AuthContext';
 import { useNavigate } from "react-router-dom";
-
+import axios from "axios";
+import { useAuth } from '../AuthContext';
 import { NavItem } from "../Components/NavItem";
 import { Button } from "../Components/Button";
 
@@ -10,19 +10,25 @@ function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
-    const { isLoggedIn, login } = useAuth()
 
-    const nav = useNavigate();
+    const { login } = useAuth();
+    const navigate = useNavigate();
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
         // Here you would typically validate the input and make an API call to authenticate the user.
         // For simplicity, we assume the login is always successful.
-        login();
 
-        console.log(isLoggedIn)
-
-        nav("/")
+        try {
+            const response = await axios.post('http://localhost:8000/api/login/', { username, password });
+            const { token, user_id, username: userName } = response.data;
+            console.log('Login successful!', response.data);
+            login({ id: user_id, username: userName }, token);
+            navigate("/");
+        } catch (error) {
+            console.error('There was an error logging in!', error);
+            alert('Invalid credentials');
+        }
     };
 
 
@@ -53,11 +59,7 @@ function Login() {
                                     className="flex flex-col justify-center items-start px-6 text-base leading-6 text-gray-500 whitespace-nowrap">
                                     <div className="flex flex-col pt-2.5 pb-5">
                                         <div className="justify-center">
-                                            {isLoggedIn ? (
-                                                <NavItem label="Dashboard" to={"/dashboard"} />
-                                            ) : (
-                                                <NavItem label="Register/Login" active />
-                                            )}
+                                            <NavItem label="Register/Login" active />
                                         </div>
                                     </div>
                                 </div>
