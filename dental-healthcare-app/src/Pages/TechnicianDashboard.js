@@ -1,5 +1,7 @@
 import * as React from "react";
+import { useState } from "react";
 import { NavItem } from "../Components/NavItem";
+import axios from 'axios';
 
 function TechnicianDashboard() {
     const [patientId, setPatientId] = useState('');
@@ -25,7 +27,7 @@ function TechnicianDashboard() {
         formData.append('image', file);
 
         try {
-            const response = await fetch('YOUR_DJANGO_BACKEND_URL/api/upload/', {
+            const response = await fetch('http://localhost:8000/api/users/upload-image/', {
                 method: 'POST',
                 body: formData,
             });
@@ -95,14 +97,14 @@ function TechnicianDashboard() {
                         {/* Image Upload Section */}
                         <div className="w-1/2 pl-4">
                             <h2 className="text-3xl font-bold mb-4">Patient Image Upload</h2>
-                            <form className="shadow-lg p-4 rounded-lg bg-white">
+                            <form onSubmit={handleSubmit} className="shadow-lg p-4 rounded-lg bg-white">
                                 <div className="mb-4">
                                     <label htmlFor="patientId" className="block text-lg font-medium text-gray-700">Patient ID</label>
-                                    <input type="text" id="patientId" name="patientId" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                                    <input onChange={handlePatientIdChange} type="text" id="user_id" name="user_id" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
                                 </div>
                                 <div className="mb-6">
                                     <label htmlFor="imageUpload" className="block text-lg font-medium text-gray-700">Upload Image</label>
-                                    <input type="file" id="imageUpload" name="imageUpload" className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                                    <input onChange={handleFileChange} type="file" id="image" name="image" className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
                                 </div>
                                 <button type="submit" className="px-6 py-3 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-md">Upload</button>
                             </form>

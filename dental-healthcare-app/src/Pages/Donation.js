@@ -1,8 +1,11 @@
 import * as React from "react";
 import { NavItem } from "../Components/NavItem";
 import { Button } from "../Components/Button";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import axios from 'axios';
 
-function FormInput({ id, label }) {
+function FormInput({ id, label, type, value, onChange }) {
     return (
         <div
             className="flex flex-col mt-2 px-3.5 pt-2.5 pb-2.5 bg-white rounded-md border border-gray-300 border-solid max-md:max-w-full">
@@ -15,10 +18,12 @@ function FormInput({ id, label }) {
             <input
                 id={id}
                 name={id}
-                type="text"
+                type={type || 'text'}
                 placeholder={label}
                 aria-label={label}
+                value={value}
                 className="w-full"
+                onChange={onChange}
             />
         </div>
     );

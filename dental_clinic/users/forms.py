@@ -4,9 +4,9 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate
 from django.utils import timezone
 
-from .models import User, PatientProfile, DentistProfile
+from .models import User, PatientProfile, DentistProfile, RadiologyImage
 from .validators import validate_national_id
-from .models import RadiologyImage
+
 
 class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
