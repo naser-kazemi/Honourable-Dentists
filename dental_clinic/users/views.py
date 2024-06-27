@@ -507,8 +507,16 @@ class CurrentUserProfileView(generics.RetrieveUpdateAPIView):
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_object(self):
-        return User.objects.get(username=self.request.user.username)
+    def get(self, request, *args, **kwargs):
+        user = User.objects.get(username=self.request.user.username)
+        serializer = UserSerializer(user)
+        data = serializer.data
+        if user.is_patient:
+            patient = PatientProfile.objects.get(user=user)
+            data['national_id'] = patient.national_id
+        if user.is_dentist:
+            pass
+        return Response(data)
 
 
 @csrf_exempt

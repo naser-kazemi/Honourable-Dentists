@@ -5,9 +5,9 @@ import { NavItem } from "../Components/NavItem";
 import { RefButton } from "../Components/Button";
 
 const AppointmentDetailCard = ({ label, value }) => (
-    <div className="flex gap-5 justify-center py-6 pr-20 pl-4 max-md:flex-wrap max-md:pr-5 max-md:max-w-full">
-        <div className="justify-left font-medium text-gray-500">{label}</div>
-        <div className="justify-right text-gray-900">{value}</div>
+    <div className="flex gap-5 justify-around py-6 pr-20 pl-4 max-md:flex-wrap max-md:pr-5 max-md:max-w-full">
+        <div className="flex flex-col justify-left w-full font-medium text-gray-500">{label}</div>
+        <div className="justify-right w-full text-gray-900">{value}</div>
     </div>
 );
 
@@ -39,6 +39,7 @@ function AppointmentDetail() {
     }
 
     const appointmentDetails = [
+        { label: "Patient", value: appointment.patient },
         { label: "Dentist", value: appointment.dentist },
         { label: "Specialty", value: appointment.speciality },
         { label: "Date", value: appointment.date },
@@ -103,10 +104,13 @@ function AppointmentDetail() {
                                     className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}
                                 />
                             ))}
-                            <div className="flex gap-5 justify-center py-5 pr-20 pl-4 font-medium bg-white max-md:flex-wrap max-md:pr-5 max-md:max-w-full">
-                                <div className="justify-center self-start mt-1.5 text-gray-500">Radiology Appointment</div>
-
-                                <RefButton text="Book Radiology Appointment" />
+                            <div className="flex gap-5 justify-left w-full py-5 pr-20 pl-4 font-medium bg-white max-md:flex-wrap max-md:pr-5 max-md:max-w-full">
+                                <div className="justify-left self-start mr-20 mt-4 text-gray-500">Radiology Appointment</div>
+                                <div className="justify-left self-start mr-20 text-gray-500"/>
+                                <div className="justify-left self-start mr-20 text-gray-500"/>
+                                <div className="justify-left self-start mr-15 text-gray-500"/>
+                                <div className="justify-left self-start mr-12 text-gray-500"/>
+                                <RefButton text="Book Radiology Appointment" style="flex justify-right ml-20 px-6 py-3 bg-gray-300 rounded-lg shadow-md hover:bg-indigo-500 hover:text-white transition-all duration-300 focus:outline-none" />
                             </div>
                         </div>
                     </div>

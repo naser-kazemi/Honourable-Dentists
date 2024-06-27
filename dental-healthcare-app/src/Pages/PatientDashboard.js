@@ -227,6 +227,7 @@ function PatientDashboard() {
                                                         src="https://cdn.builder.io/api/v1/image/assets/TEMP/43db1707a3936df488779fc536309cc097833044ec6af5073e75a932966ef411?apiKey=0b32f1c6b149400da7ee52316f29de76&"
                                                         alt=""
                                                         label="View History"
+                                                        to="/appointment/patienthistory"
                                                     />
                                                 </div>
                                                 <div className="flex gap-4 mt-4 max-md:flex-wrap max-md:max-w-full">

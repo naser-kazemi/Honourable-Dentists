@@ -136,7 +136,7 @@ function MedicalRecord() {
                     </MedicalHistoryItem>
                 </div>
             </section>
-            <footer className="flex justify-center items-center px-16 mt-2.5 text-base font-bold leading-6 text-center text-white max-md:px-5 max-md:max-w-full">
+            <footer className="flex justify-center items-center px-16 mt-2.5 text-base font-bold leading-6 text-center max-md:px-5 max-md:max-w-full">
                 <RefButton onClick={downloadRecord} text="Download Full Record" />
             </footer>
         </main>
