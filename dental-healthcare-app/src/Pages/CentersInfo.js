@@ -1,15 +1,7 @@
 import * as React from "react";
 import { NavItem } from "../Components/NavItem";
-import { Button } from "../Components/Button";
+import { useEffect, useState } from 'react';
 
-function FormInput({ id, label }) {
-    return (
-        <div className="flex flex-col mt-2 px-3.5 pt-2.5 pb-2.5 bg-white rounded-md border border-gray-300 border-solid max-md:max-w-full">
-            <label htmlFor={id} className="justify-center max-md:max-w-full sr-only">{label}</label>
-            <input id={id} name={id} type="text" placeholder={label} aria-label={label} className="w-full" />
-        </div>
-    );
-}
 
 function ImagingCenterDetails({ centers }) {
     return (
@@ -18,8 +10,9 @@ function ImagingCenterDetails({ centers }) {
             {centers.map((center, index) => (
                 <div key={index} className="bg-white p-4 rounded-lg shadow-md mb-4">
                     <h4 className="text-lg font-bold">{center.name}</h4>
-                    <p>{center.address}</p>
+                    <p>{center.location}</p>
                     <p>{center.phone}</p>
+                    <p>{center.operational_hours}</p>
                 </div>
             ))}
         </div>
@@ -28,10 +21,14 @@ function ImagingCenterDetails({ centers }) {
 
 
 function CenterInfo() {
-    const centers = [
-        { name: "City Imaging", address: "123 Main St, YourCity", phone: "123-456-7890" },
-        { name: "HealthScan Plus", address: "456 Center Rd, BestTown", phone: "987-654-3210" }
-    ];
+    const [centers, setCenters] = useState([]);
+    useEffect(() => {
+        fetch('http://localhost:8000/api/imaging_center/sendimagingcenters/')
+            .then(response => response.json())
+            .then(data => setCenters(data))
+            .catch(error => console.error('Error:', error));
+    }, []);
+    
     return (
         <div className="flex flex-col">
             <header className="flex flex-col bg-gray-100">
