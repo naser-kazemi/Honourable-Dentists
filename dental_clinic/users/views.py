@@ -484,24 +484,24 @@ def dentist_dashboard(request):
 
 
 @csrf_exempt
+@login_required
 def upload_image(request):
     if not request.user.is_technician:
         return HttpResponseForbidden("You are not authorized to upload images.")
 
     if request.method == 'POST':
-        form = RadiologyImageForm(request.POST, request.FILES)
-        if form.is_valid():
-            radiology_image = form.save(commit=False)
-            radiology_image.technician = request.user
-            patient_id = form.cleaned_data['user_id']
-            patient = get_object_or_404(PatientProfile, id=patient_id)
-            # print('--------->', patient_id)
-            radiology_image.patient = patient
-            radiology_image.save()
-            return redirect('some_view')
-    else:
-        form = RadiologyImageForm()
-    return render(request, 'upload_image.html', {'form': form})
+        radiology_image = request.FILES.get('image')
+        patient_id = request.POST.get('user_id')
+        patient = get_object_or_404(PatientProfile, national_id=patient_id)
+        
+        radiology_image_instance = RadiologyImage.objects.create(
+            user_id=patient_id,
+            patient=patient,
+            image=radiology_image
+        )
+
+        return render(request, 'base_user.html')
+
 
 
 class CurrentPatientProfileView(generics.RetrieveUpdateAPIView):
