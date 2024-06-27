@@ -14,8 +14,9 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics, status
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny
+from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, renderer_classes
 from django.conf import settings
 from rest_framework.views import APIView
 from .models import User, PatientProfile, DentistProfile, TechnicianProfile, RadiologyImage
@@ -223,140 +224,150 @@ def register_patient_form(request):
 
 
 @csrf_exempt
+@api_view(('POST',))
+@renderer_classes((TemplateHTMLRenderer, JSONRenderer))
 def register_patient(request):
     if request.method == 'POST':
-        data = json.loads(request.body)
-        password = data.get('password')
-        password_repeat = data.get('password_repeat')
         try:
-            validate_password(password, password_repeat)
-        except ValidationError as e:
-            print(e)
-            return
-
-        user = User.objects.create(
-            username=data.get('username', ''),
-            first_name=data.get('first_name', ''),
-            last_name=data.get('last_name', ''),
-            address=data.get('address', ''),
-            province=data.get('province', 'تهران'),
-            city=data.get('city', 'تهران'),
-            phone_number=data.get('phone_number', '+980000000000'),
-            is_patient=True,
-            is_dentist=False,
-            is_technecian=False
-        )
-
-        user.set_password(password)
-        user.save()
-
-        PatientProfile.objects.create(
-            user=user,
-            national_id=data.get('national_id', '6816545087'),
-            birth_date=data.get('birth_date', timezone.now().date())
-        )
-
-        if user.address:
+            data = json.loads(request.body)
+            password = data.get('password')
+            password_repeat = data.get('password_repeat')
             try:
-                latitude, longitude = get_geocode(user.address, settings.NESHAN_API_KEY)
-                user.location_latitude = latitude
-                user.location_longitude = longitude
-                user.save()
-            except ValueError as e:
-                messages.error(request, str(e))
-                return messages
+                validate_password(password, password_repeat)
+            except ValidationError as e:
+                print(e)
+                return
 
-        print(user)
+            user = User.objects.create(
+                username=data.get('username', ''),
+                first_name=data.get('first_name', ''),
+                last_name=data.get('last_name', ''),
+                address=data.get('address', ''),
+                province=data.get('province', 'تهران'),
+                city=data.get('city', 'تهران'),
+                phone_number=data.get('phone_number', '+980000000000'),
+                is_patient=True,
+                is_dentist=False,
+                is_technician=False
+            )
 
-    return messages.success(request, 'Patient registered successfully!')
+            user.set_password(password)
+            user.save()
+
+            PatientProfile.objects.create(
+                user=user,
+                national_id=data.get('national_id', '6816545087'),
+                birth_date=data.get('birth_date', timezone.now().date())
+            )
+
+            if user.address:
+                try:
+                    latitude, longitude = get_geocode(user.address, settings.NESHAN_API_KEY)
+                    user.location_latitude = latitude
+                    user.location_longitude = longitude
+                    user.save()
+                except ValueError as e:
+                    messages.error(request, str(e))
+                    return Response({'message': str(messages)}, status=status.HTTP_201_CREATED)
+
+            print(user)
+            messages.success(request, 'Patient registered successfully!')
+            return Response({'message': str(messages)}, status=status.HTTP_201_CREATED)
+        except:
+            messages.error(request, 'Patient was not registered!')
+            return Response({'message': str(messages)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @csrf_exempt
+@api_view(('POST',))
+@renderer_classes((TemplateHTMLRenderer, JSONRenderer))
 def register_dentist(request):
     if request.method == 'POST':
-        data = json.loads(request.body)
-        password = data.get('password')
-        password_repeat = data.get('password_repeat')
         try:
+            data = json.loads(request.body)
+            password = data.get('password')
+            password_repeat = data.get('password_repeat')
             validate_password(password, password_repeat)
-        except ValidationError as e:
-            print(e)
-            return
 
-        user = User.objects.create(
-            username=data.get('username', ''),
-            first_name=data.get('first_name', ''),
-            last_name=data.get('last_name', ''),
-            address=data.get('address', ''),
-            province=data.get('province', 'تهران'),
-            city=data.get('city', 'تهران'),
-            phone_number=data.get('phone_number', '+980000000000'),
-            is_patient=False,
-            is_dentist=True,
-            is_technecian=False
-        )
+            user = User.objects.create(
+                username=data.get('username', ''),
+                first_name=data.get('first_name', ''),
+                last_name=data.get('last_name', ''),
+                address=data.get('address', ''),
+                province=data.get('province', 'تهران'),
+                city=data.get('city', 'تهران'),
+                phone_number=data.get('phone_number', '+980000000000'),
+                is_patient=False,
+                is_dentist=True,
+                is_technician=False
+            )
 
-        user.set_password(password)
-        user.save()
+            user.set_password(password)
+            user.save()
 
-        DentistProfile.objects.create(
-            user=user,
-            medical_council_number=data.get('medical_council_number', ''),
-            email=data.get('email', '')
-        )
+            DentistProfile.objects.create(
+                user=user,
+                medical_council_number=data.get('medical_council_number', ''),
+                email=data.get('email', '')
+            )
 
-        if user.address:
-            try:
-                latitude, longitude = get_geocode(user.address, settings.NESHAN_API_KEY)
-                user.location_latitude = latitude
-                user.location_longitude = longitude
-                user.save()
-            except ValueError as e:
-                messages.error(request, str(e))
-                return messages
+            if user.address:
+                try:
+                    latitude, longitude = get_geocode(user.address, settings.NESHAN_API_KEY)
+                    user.location_latitude = latitude
+                    user.location_longitude = longitude
+                    user.save()
+                except ValueError as e:
+                    messages.error(request, str(e))
+                    return Response({'message': str(messages)}, status=status.HTTP_201_CREATED)
 
-        print(user)
-
-    return messages.success(request, 'Patient registered successfully!')
+            print(user)
+            messages.success(request, 'Dentist registered successfully!')
+            return Response({'message': str(messages)}, status=status.HTTP_201_CREATED)
+        except:
+            messages.error(request, 'Dentist was not registered!')
+            return Response({'message': str(messages)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @csrf_exempt
+@api_view(('POST',))
+@renderer_classes((TemplateHTMLRenderer, JSONRenderer))
 def register_technician(request):
     if request.method == 'POST':
-        data = json.loads(request.body)
-        print('-------->', data)
-
-        password = data.get('password')
-        password_repeat = data.get('password_repeat')
-
         try:
+            data = json.loads(request.body)
+            print('-------->', data)
+
+            password = data.get('password')
+            password_repeat = data.get('password_repeat')
+
             validate_password(password, password_repeat)
-        except ValidationError as e:
-            form.add_error('password', e)
-            return render(request, 'register_technician.html', {'form': form})
 
-        user = User.objects.create(
-            username=data.get('username', ''),
-            first_name=data.get('first_name', ''),
-            last_name=data.get('last_name', ''),
-            address=data.get('address', ''),
-            province=data.get('province', 'تهران'),
-            city=data.get('city', 'تهران'),
-            phone_number=data.get('phone_number', '+980000000000'),
-            is_patient=False,
-            is_dentist=False,
-            is_technician=True,
-        )
+            user = User.objects.create(
+                username=data.get('username', ''),
+                first_name=data.get('first_name', ''),
+                last_name=data.get('last_name', ''),
+                address=data.get('address', ''),
+                province=data.get('province', 'تهران'),
+                city=data.get('city', 'تهران'),
+                phone_number=data.get('phone_number', '+980000000000'),
+                is_patient=False,
+                is_dentist=False,
+                is_technician=True,
+            )
 
-        user.set_password(password)
-        user.save()
+            user.set_password(password)
+            user.save()
 
-        TechnicianProfile.objects.create(user=user,
-                                        certification_number=data.get('certification_number'),
-                                        email=data.get('email'))
+            TechnicianProfile.objects.create(user=user,
+                                             certification_number=data.get('certification_number'),
+                                             email=data.get('email'))
 
-        messages.success(request, 'Technician registered successfully!')
-        return render(request, 'register_technician.html')
+            messages.success(request, 'Technician registered successfully!')
+            return Response({'message': str(messages)}, status=status.HTTP_201_CREATED)
+        except:
+            messages.error(request, 'Technician was not registered!')
+            return Response({'message': str(messages)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @csrf_exempt
@@ -422,7 +433,7 @@ class FormLoginView(View):
                 global CURRENT_USER
                 CURRENT_USER['user'] = deepcopy(user)
                 CURRENT_USER['is_logged_in'] = True
-                login(request, user)
+                login_user(request, user)
                 if user.is_patient:
                     print("the user is a patient")
                     return redirect('patient_dashboard')
@@ -438,24 +449,27 @@ class FormLoginView(View):
         return render(request, self.template_name, {'form': form})
 
 
-class LoginView(APIView):
-    def post(self, request, *args, **kwargs):
-        data = json.loads(request.body)
-        username = data.get('username')
-        password = data.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user is not None and check_password(password, user.password):
-            print("\n=====================")
-            print(user, user.is_dentist)
-            print("=====================\n")
-            global CURRENT_USER
-            CURRENT_USER['user'] = deepcopy(user)
-            CURRENT_USER['is_logged_in'] = True
-            login(request, user)
-            token, created = Token.objects.get_or_create(user=user)
-            return Response({'token': token.key, 'user_id': user.id, 'username': user.username})
+@csrf_exempt
+@api_view(('POST',))
+@renderer_classes((TemplateHTMLRenderer, JSONRenderer))
+def login_user(request):
+    data = json.loads(request.body)
+    print(data)
+    username = data.get('username')
+    password = data.get('password')
+    user = authenticate(request, username=username, password=password)
+    if user is not None and check_password(password, user.password):
+        print("\n=====================")
+        print(user, user.is_dentist)
+        print("=====================\n")
+        global CURRENT_USER
+        CURRENT_USER['user'] = deepcopy(user)
+        CURRENT_USER['is_logged_in'] = True
+        login(request, user)
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({'token': token.key, 'user_id': user.user_id, 'username': user.username}, status=status.HTTP_200_OK)
 
-        return Response({'error': 'Invalid Credentials'}, status=status.HTTP_400_BAD_REQUEST)
+    return Response({'error': 'Invalid Credentials'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @login_required
@@ -487,7 +501,6 @@ def upload_image(request):
     else:
         form = RadiologyImageForm()
     return render(request, 'upload_image.html', {'form': form})
-
 
 # @csrf_exempt
 # def get_current_user(request):

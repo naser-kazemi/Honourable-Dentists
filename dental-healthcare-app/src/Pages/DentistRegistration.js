@@ -122,7 +122,7 @@ function DentistRegistration() {
                         <FormInput id="username" label="Username" value={formData.username} onChange={handleChange} />
                         <FormInput id="password" label="Password" type="password" value={formData.password} onChange={handleChange} />
                         <FormInput
-                            id="confirmPassword"
+                            id="password_repeat"
                             label="Confirm Password"
                             type="password"
                             value={formData.password_repeat}

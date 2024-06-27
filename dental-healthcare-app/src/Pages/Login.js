@@ -20,7 +20,10 @@ function Login() {
         // For simplicity, we assume the login is always successful.
 
         try {
-            const response = await axios.post('http://localhost:8000/api/login/', { username, password });
+            const response = await axios.post('http://localhost:8000/api/users/login/', { 
+                'username': username,
+                'password': password
+            });
             const { token, user_id, username: userName } = response.data;
             console.log('Login successful!', response.data);
             login({ id: user_id, username: userName }, token);
