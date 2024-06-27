@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { NavItem } from "../Components/NavItem";
-import { Button } from "../Components/Button";
+import { RefButton } from "../Components/Button";
 
 
 const PatientRecord = ({ name, lastVisit, services }) => (
@@ -154,7 +154,7 @@ function PatientsHistory() {
                         </div>
                     </div>
                     <footer className="flex flex-col justify-center self-end mt-8 max-w-full text-sm font-medium leading-5">
-                        <Button onClick={loadMoreRecords} text="View More Records" />
+                        <RefButton onClick={loadMoreRecords} text="View More Records" />
                     </footer>
                 </article>
             </section>

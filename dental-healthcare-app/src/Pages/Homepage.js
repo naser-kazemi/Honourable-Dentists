@@ -1,7 +1,7 @@
 import React from 'react';
 import { AddUserIcon, CalendarIcon, HomeIcon } from "./Icons";
 import { NavItem } from "../Components/NavItem";
-import { Button } from "../Components/Button";
+import { RefButton } from "../Components/Button";
 
 
 const Feature = ({ icon, title, description }) => (
@@ -62,13 +62,13 @@ const Homepage = () => (
                         Dentists, and Radiology Centers</p>
                     <div
                         className="flex gap-4 justify-center items-start px-20 pt-4 mt-4 text-base font-semibold leading-6 text-indigo-600">
-                        <Button text="I'm a Patient" />
-                        <Button text="I'm a Dentist" />
-                        <Button text="I'm a Technician" />
+                        <RefButton text="I'm a Patient" />
+                        <RefButton text="I'm a Dentist" />
+                        <RefButton text="I'm a Technician" />
                     </div>
                     <div
                         className="flex gap-4 justify-center items-start px-20 pt-4 mt-4 text-base font-semibold leading-6 text-indigo-600">
-                        <Button text="Check the imaging centers" to={"/centersinfo"} />
+                        <RefButton text="Check the imaging centers" to={"/centersinfo"} />
                     </div>
                 </div>
             </div>
@@ -95,7 +95,7 @@ const Homepage = () => (
                         Today</h2>
                     <div
                         className="flex gap-4 justify-center items-start px-20 pt-4 mt-4 text-base font-semibold leading-6 text-indigo-600">
-                        <Button text="Register Now" to={"/registerlogin"} />
+                        <RefButton text="Register Now" to={"/registerlogin"} />
                     </div>
                 </div>
             </div>

@@ -21,7 +21,7 @@ class User(AbstractUser):
     location_longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.first_name}, {self.last_name}, {self.username}"
+        return f"{self.first_name}, {self.last_name}"
 
 
 class PatientProfile(models.Model):
@@ -34,6 +34,7 @@ class PatientProfile(models.Model):
 
 class DentistProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    speciality = models.CharField(max_length=50, default="General Dentist")
     medical_council_number = models.CharField(max_length=50)
     email = models.EmailField(unique=True)
 

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from '../AuthContext';
 import { NavItem } from "../Components/NavItem";
-import { Button } from "../Components/Button";
+import { RefButton } from "../Components/Button";
 
 function Login() {
 
@@ -27,6 +27,10 @@ function Login() {
             const { token, user_id, username: userName } = response.data;
             console.log('Login successful!', response.data);
             login({ id: user_id, username: userName }, token);
+            // save the authentication data to local storage
+            localStorage.setItem('token', token);
+            localStorage.setItem('user_id', user_id);
+            localStorage.setItem('username', userName);
             navigate("/");
         } catch (error) {
             console.error('There was an error logging in!', error);
@@ -96,7 +100,7 @@ function Login() {
                             onChange={(e) => setPassword(e.target.value)}
                             required
                         />
-                        <Button type="submit" text="Login" />
+                        <RefButton type="submit" text="Login" />
                     </form>
                     <div
                         className="justify-center items-center px-16 mt-5 max-w-full text-sm leading-5 text-gray-600 w-[791px] max-md:px-5">

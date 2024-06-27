@@ -11,7 +11,7 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework import generics, status
+from rest_framework import generics, status, permissions
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny
 from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer
@@ -28,7 +28,7 @@ from .forms import (PatientRegistrationForm,
                     TechnicianRegistrationForm,
                     RadiologyImageForm,
                     CustomLoginForm)
-from .validators import validate_password
+from .validators import *
 from django.contrib.auth.views import LoginView
 
 from datetime import datetime
@@ -58,7 +58,7 @@ class PatientProfileListCreateView(generics.ListCreateAPIView):
                 address=data.get('address', ''),
                 province=data.get('province', 'تهران'),
                 city=data.get('city', 'تهران'),
-                phone_number=data.get('phone_number', '+980000000000'),
+                phone_number=data.get('phone_number', '+989000000000'),
                 is_patient=True,
                 is_dentist=False
             )
@@ -192,7 +192,7 @@ def register_patient_form(request):
                 address=data.get('address', ''),
                 province=data.get('province', 'تهران'),
                 city=data.get('city', 'تهران'),
-                phone_number=data.get('phone_number', '+980000000000'),
+                phone_number=data.get('phone_number', '+989000000000'),
                 is_patient=True,
                 is_dentist=False
             )
@@ -245,7 +245,7 @@ def register_patient(request):
                 address=data.get('address', ''),
                 province=data.get('province', 'تهران'),
                 city=data.get('city', 'تهران'),
-                phone_number=data.get('phone_number', '+980000000000'),
+                phone_number=data.get('phone_number', '+989000000000'),
                 is_patient=True,
                 is_dentist=False,
                 is_technician=False
@@ -296,7 +296,7 @@ def register_dentist(request):
                 address=data.get('address', ''),
                 province=data.get('province', 'تهران'),
                 city=data.get('city', 'تهران'),
-                phone_number=data.get('phone_number', '+980000000000'),
+                phone_number=data.get('phone_number', '+989000000000'),
                 is_patient=False,
                 is_dentist=True,
                 is_technician=False
@@ -350,7 +350,7 @@ def register_technician(request):
                 address=data.get('address', ''),
                 province=data.get('province', 'تهران'),
                 city=data.get('city', 'تهران'),
-                phone_number=data.get('phone_number', '+980000000000'),
+                phone_number=data.get('phone_number', '+989000000000'),
                 is_patient=False,
                 is_dentist=False,
                 is_technician=True,
@@ -467,7 +467,8 @@ def login_user(request):
         CURRENT_USER['is_logged_in'] = True
         login(request, user)
         token, created = Token.objects.get_or_create(user=user)
-        return Response({'token': token.key, 'user_id': user.user_id, 'username': user.username}, status=status.HTTP_200_OK)
+        return Response({'token': token.key, 'user_id': user.user_id, 'username': user.username},
+                        status=status.HTTP_200_OK)
 
     return Response({'error': 'Invalid Credentials'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -502,5 +503,48 @@ def upload_image(request):
         return render(request, 'base_user.html')
 
 
-# @csrf_exempt
-# def get_current_user(request):
+
+class CurrentPatientProfileView(generics.RetrieveUpdateAPIView):
+    serializer_class = PatientProfileSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self):
+        return PatientProfile.objects.get(user=self.request.user)
+
+
+@csrf_exempt
+@api_view(('POST',))
+@renderer_classes((TemplateHTMLRenderer, JSONRenderer))
+def update_patient(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+
+            print(data.get('username'))
+
+            user = User.objects.get(username=data.get('username'))
+            user.city = data.get('city', '')
+            user.province = data.get('province', '')
+            user.address = data.get('address', '')
+            validate_phone_number(data.get('phone_number'))
+            user.phone_number = data.get('phone_number')
+
+            if user.address:
+                try:
+                    latitude, longitude = get_geocode(user.address, settings.NESHAN_API_KEY)
+                    user.location_latitude = latitude
+                    user.location_longitude = longitude
+                except ValueError:
+                    pass
+
+            user.save()
+
+            print(user)
+            messages.success(request, 'Patient updated successfully!')
+            return Response({'message': str(messages)}, status=status.HTTP_200_OK)
+        except ValidationError:
+            messages.error(request, 'Invaild phone number')
+            return Response({'message': str(messages)}, status=status.HTTP_400_BAD_REQUEST)
+        except:
+            messages.error(request, 'Dentist was not updated!')
+            return Response({'message': str(messages)}, status=status.HTTP_400_BAD_REQUEST)

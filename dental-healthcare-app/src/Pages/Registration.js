@@ -1,6 +1,6 @@
 import * as React from "react";
 import { NavItem } from "../Components/NavItem";
-import { Button } from "../Components/Button";
+import { RefButton } from "../Components/Button";
 
 
 function Registration() {
@@ -50,9 +50,9 @@ function Registration() {
                 <div
                     className="flex gap-4 justify-center items-start px-20 pt-4 mt-4 text-base font-semibold leading-6 text-indigo-600">
                     <div className="flex gap-4">
-                        <Button text="Patient" to={"registerlogin/patient"} />
-                        <Button text="Dentist" to={"registerlogin/dentist"} />
-                        <Button text={"Radiology Center"} to={"registerlogin/radiology"} />
+                        <RefButton text="Patient" to={"registerlogin/patient"} />
+                        <RefButton text="Dentist" to={"registerlogin/dentist"} />
+                        <RefButton text={"Radiology Center"} to={"registerlogin/radiology"} />
                     </div>
                 </div>
                 <div

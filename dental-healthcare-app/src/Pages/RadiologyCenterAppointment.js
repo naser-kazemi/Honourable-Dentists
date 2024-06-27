@@ -1,6 +1,6 @@
 import * as React from "react";
 import { NavItem } from "../Components/NavItem";
-import { Button } from "../Components/Button";
+import { RefButton } from "../Components/Button";
 
 
 function LabelInput({ label, id, type, placeholder }) {
@@ -67,7 +67,7 @@ function MyForm() {
                             <a href="#terms" className="text-indigo-600">Terms and Conditions</a>
                         </label>
                     </div>
-                    <Button type="submit" text="Submit"/>
+                    <RefButton type="submit" text="Submit"/>
                 </div>
             </section>
         </form>

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { NavItem } from "../Components/NavItem";
-import { Button } from "../Components/Button";
+import { RefButton } from "../Components/Button";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from 'axios';
@@ -157,7 +157,7 @@ function TechnicianRegistration() {
                             </div>
                         </div>
                         <div className="ml-1">
-                            <Button type="submit"
+                            <RefButton type="submit"
                                 style="justify-center items-center px-48 py-2.5 mt-6 text-center text-white whitespace-nowrap bg-indigo-600 rounded-md leading-[143%] max-md:px-5 max-md:max-w-full"
                                 text="Register" />
                         </div>

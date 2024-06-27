@@ -1,6 +1,6 @@
 import * as React from "react";
 import { NavItem } from "../Components/NavItem";
-import { Button } from "../Components/Button";
+import { RefButton } from "../Components/Button";
 
 const InfoCard = ({ title, children }) => (
     <div className="flex flex-col grow self-stretch p-4 w-full text-base font-bold leading-6 text-black bg-gray-50 rounded max-md:mt-4">
@@ -137,7 +137,7 @@ function MedicalRecord() {
                 </div>
             </section>
             <footer className="flex justify-center items-center px-16 mt-2.5 text-base font-bold leading-6 text-center text-white max-md:px-5 max-md:max-w-full">
-                <Button onClick={downloadRecord} text="Download Full Record" />
+                <RefButton onClick={downloadRecord} text="Download Full Record" />
             </footer>
         </main>
     );
