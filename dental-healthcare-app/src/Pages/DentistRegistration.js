@@ -1,30 +1,72 @@
-import * as React from "react";
+import React, { useState } from "react";
 import { NavItem } from "../Components/NavItem";
 import { Button } from "../Components/Button";
+import { FormInput } from "../Components/FormInput";
 
-function FormInput({ id, label }) {
-    return (
-        <div
-            className="flex flex-col mt-2 px-3.5 pt-2.5 pb-2.5 bg-white rounded-md border border-gray-300 border-solid max-md:max-w-full">
-            <label
-                htmlFor={id}
-                className="justify-center max-md:max-w-full sr-only"
-            >
-                {label}
-            </label>
-            <input
-                id={id}
-                name={id}
-                type="text"
-                placeholder={label}
-                aria-label={label}
-                className="w-full"
-            />
-        </div>
-    );
-}
+import { useNavigate } from "react-router-dom";
+import axios from 'axios';
+
 
 function DentistRegistration() {
+
+
+    const nav = useNavigate();
+
+
+    const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
+        medicalCouncilId: '',
+        emailAddress: '',
+        username: '',
+        password: '',
+        password_repeat: ''
+    });
+
+
+    const handleChange = (e) => {
+        const { id, value } = e.target;
+        setFormData({ ...formData, [id]: value });
+    };
+
+    const validatePassword = (password) => {
+        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+        return regex.test(password);
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (formData.password !== formData.password_repeat) {
+            alert("Passwords do not match");
+            return;
+        }
+
+        if (!validatePassword(formData.password)) {
+            alert("Password must be at least 8 characters long, contain one uppercase letter, one lowercase letter, and one number.");
+            return;
+        }
+
+
+        try {
+            const response = await axios.post('http://localhost:8000/api/users/register/dentist/', {
+                first_name: formData.firstName,
+                last_name: formData.lastName,
+                medical_council_number: formData.medicalCouncilId,
+                email: formData.emailAddress,
+                username: formData.username,
+                password: formData.password,
+                password_repeat: formData.password_repeat
+            });
+            console.log(response.data);
+            alert("Registration successful");
+            nav("/");
+        } catch (error) {
+            console.error('There was an error registering the patient!', error);
+        }
+    };
+
+
     return (
         <div className="flex flex-col">
             <header className="flex flex-col bg-gray-100">
@@ -72,17 +114,19 @@ function DentistRegistration() {
                             Or <a href="/registerlogin/login" className="text-indigo-600">login</a> to your account
                         </p>
                     </div>
-                    <form className="flex flex-col mt-8 text-sm max-md:max-w-full">
-                        <FormInput id="firstName" label="First Name" />
-                        <FormInput id="lastName" label="Last Name" />
-                        <FormInput id="medicalCouncilId" label="Medical Council ID" />
-                        <FormInput id="email" label="Email Address" />
-                        <FormInput id="username" label="Username" />
-                        <FormInput id="password" label="Password" type="password" />
+                    <form className="flex flex-col mt-8 text-sm max-md:max-w-full" onSubmit={handleSubmit}>
+                        <FormInput id="firstName" label="First Name" value={formData.firstName} onChange={handleChange} />
+                        <FormInput id="lastName" label="Last Name" value={formData.lastName} onChange={handleChange} />
+                        <FormInput id="medicalCouncilId" label="Medical Council ID" value={formData.medicalCouncilId} onChange={handleChange} />
+                        <FormInput id="emailAddress" label="Email Address" value={formData.emailAddress} onChange={handleChange} />
+                        <FormInput id="username" label="Username" value={formData.username} onChange={handleChange} />
+                        <FormInput id="password" label="Password" type="password" value={formData.password} onChange={handleChange} />
                         <FormInput
                             id="confirmPassword"
                             label="Confirm Password"
                             type="password"
+                            value={formData.password_repeat}
+                            onChange={handleChange}
                         />
                         <div
                             className="flex flex-col justify-center items-start mt-6 leading-5 text-gray-600 max-md:pr-5 max-md:max-w-full">

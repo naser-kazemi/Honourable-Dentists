@@ -12,14 +12,15 @@ from django.utils import timezone
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import generics, status
+from rest_framework.authtoken.models import Token
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from django.conf import settings
-from .models import User, PatientProfile, DentistProfile, TechnicianProfile
+from rest_framework.views import APIView
+from .models import User, PatientProfile, DentistProfile, TechnicianProfile, RadiologyImage
 from .serializers import UserSerializer, PatientProfileSerializer, DentistProfileSerializer
 from dental_clinic.utils import get_geocode
-from .validators import validate_password
 from .forms import (PatientRegistrationForm,
                     DentistRegistrationForm,
                     UserRegistrationForm,
@@ -224,12 +225,7 @@ def register_patient_form(request):
 @csrf_exempt
 def register_patient(request):
     if request.method == 'POST':
-        print("0000000000000alsnnaosk[dakmsnljdka[okdfnqpewkv'n;'ewprqfjn;qewrf'")
-        # print(request.body)
         data = json.loads(request.body)
-        print("==================")
-        print(data)
-        print("==================")
         password = data.get('password')
         password_repeat = data.get('password_repeat')
         try:
@@ -247,7 +243,8 @@ def register_patient(request):
             city=data.get('city', 'تهران'),
             phone_number=data.get('phone_number', '+980000000000'),
             is_patient=True,
-            is_dentist=False
+            is_dentist=False,
+            is_technecian=False
         )
 
         user.set_password(password)
@@ -267,61 +264,60 @@ def register_patient(request):
                 user.save()
             except ValueError as e:
                 messages.error(request, str(e))
+                return messages
 
         print(user)
 
-        messages.success(request, 'Patient registered successfully!')
+    return messages.success(request, 'Patient registered successfully!')
 
 
+@csrf_exempt
 def register_dentist(request):
     if request.method == 'POST':
-        form = DentistRegistrationForm(request.POST)
-        if form.is_valid():
-            data = form.cleaned_data
-            password = data.get('password')
-            password_repeat = data.get('password_repeat')
+        data = json.loads(request.body)
+        password = data.get('password')
+        password_repeat = data.get('password_repeat')
+        try:
+            validate_password(password, password_repeat)
+        except ValidationError as e:
+            print(e)
+            return
+
+        user = User.objects.create(
+            username=data.get('username', ''),
+            first_name=data.get('first_name', ''),
+            last_name=data.get('last_name', ''),
+            address=data.get('address', ''),
+            province=data.get('province', 'تهران'),
+            city=data.get('city', 'تهران'),
+            phone_number=data.get('phone_number', '+980000000000'),
+            is_patient=False,
+            is_dentist=True,
+            is_technecian=False
+        )
+
+        user.set_password(password)
+        user.save()
+
+        DentistProfile.objects.create(
+            user=user,
+            medical_council_number=data.get('medical_council_number', ''),
+            email=data.get('email', '')
+        )
+
+        if user.address:
             try:
-                validate_password(password, password_repeat)
-            except ValidationError as e:
-                form.add_error('password', e)
-                return render(request, 'register_dentist.html', {'form': form})
+                latitude, longitude = get_geocode(user.address, settings.NESHAN_API_KEY)
+                user.location_latitude = latitude
+                user.location_longitude = longitude
+                user.save()
+            except ValueError as e:
+                messages.error(request, str(e))
+                return messages
 
-            user = User.objects.create(
-                username=data.get('username', ''),
-                first_name=data.get('first_name', ''),
-                last_name=data.get('last_name', ''),
-                address=data.get('address', ''),
-                province=data.get('province', ''),
-                city=data.get('city', ''),
-                phone_number=data.get('phone_number', ''),
-                is_patient=False,
-                is_dentist=True
-            )
+        print(user)
 
-            user.set_password(password)
-            user.save()
-
-            DentistProfile.objects.create(
-                user=user,
-                medical_council_number=data.get('medical_council_number', ''),
-                email=data.get('email', '')
-            )
-
-            if user.address:
-                try:
-                    latitude, longitude = get_geocode(user.address, settings.NESHAN_API_KEY)
-                    user.location_latitude = latitude
-                    user.location_longitude = longitude
-                    user.save()
-                except ValueError as e:
-                    messages.error(request, str(e))
-                    return render(request, 'register_dentist.html', {'form': form})
-
-            messages.success(request, 'Dentist registered successfully!')
-            return redirect('register-dentist')
-    else:
-        form = DentistRegistrationForm()
-    return render(request, 'register_dentist.html', {'form': form})
+    return messages.success(request, 'Patient registered successfully!')
 
 
 @csrf_exempt
@@ -405,7 +401,7 @@ def register_technician_form(request):
     return render(request, 'register_technician.html', {'form': form})
 
 
-class CustomLoginView(View):
+class FormLoginView(View):
     form_class = CustomLoginForm
     template_name = 'login.html'
 
@@ -442,6 +438,26 @@ class CustomLoginView(View):
         return render(request, self.template_name, {'form': form})
 
 
+class LoginView(APIView):
+    def post(self, request, *args, **kwargs):
+        data = json.loads(request.body)
+        username = data.get('username')
+        password = data.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None and check_password(password, user.password):
+            print("\n=====================")
+            print(user, user.is_dentist)
+            print("=====================\n")
+            global CURRENT_USER
+            CURRENT_USER['user'] = deepcopy(user)
+            CURRENT_USER['is_logged_in'] = True
+            login(request, user)
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({'token': token.key, 'user_id': user.id, 'username': user.username})
+
+        return Response({'error': 'Invalid Credentials'}, status=status.HTTP_400_BAD_REQUEST)
+
+
 @login_required
 def patient_dashboard(request):
     return render(request, 'patient_dashboard.html')
@@ -471,3 +487,7 @@ def upload_image(request):
     else:
         form = RadiologyImageForm()
     return render(request, 'upload_image.html', {'form': form})
+
+
+# @csrf_exempt
+# def get_current_user(request):
