@@ -1,20 +1,11 @@
-import React, {useState} from "react";
-import {EmailIcon, PhoneIcon, FaxIcon, LocationIcon} from "./Icons";
-
-const NavItem = ({label, to, active}) => (
-    <a href={to}
-       className={`justify-center px-1 py-6 ${
-           active ? "border-indigo-500 border-b-[3px] text-gray-900" : "text-gray-500"
-       }`}
-       role="button"
-       tabIndex="0"
-    >
-        {label}
-    </a>
-);
+import React, { useState } from "react";
+import { EmailIcon, PhoneIcon, FaxIcon, LocationIcon } from "./Icons";
+import { Header } from "../Components/Header";
 
 
-const ContactInfo = ({icon, info}) => (
+
+
+const ContactInfo = ({ icon, info }) => (
     <div className="flex gap-0 mt-3">
         <div className="justify-center pr-2 my-auto text-base font-black leading-4 text-indigo-500">
             {icon}
@@ -26,40 +17,7 @@ const ContactInfo = ({icon, info}) => (
 const Contact = () => {
     return (
         <div className="flex flex-col">
-            <header className="flex flex-col bg-gray-100">
-                <div className="flex flex-col justify-center pb-2.5 w-full bg-gray-100 max-md:max-w-full">
-                    <div className="flex flex-col justify-center w-full bg-white shadow-md max-md:max-w-full">
-                        <div className="flex flex-col justify-center px-8 w-full max-md:px-5 max-md:max-w-full">
-                            <nav className="flex gap-5 justify-between w-full max-md:flex-wrap max-md:max-w-full">
-                                <div className="flex gap-0 max-md:flex-wrap">
-                                    <div className="flex flex-col py-5 text-xl font-semibold leading-7 text-black">
-                                        <div className="justify-center"><img src="logo_mark.png" alt="Logo"
-                                                                             className="w-12"/>
-                                        </div>
-                                    </div>
-                                    <div
-                                        className="flex flex-col justify-center px-6 text-sm leading-5 text-gray-500 whitespace-nowrap">
-                                        <div className="flex gap-0">
-                                            <NavItem label="Home" to="/"/>
-                                            <NavItem label="About" to="/about"/>
-                                            <NavItem label="Services" to="/services"/>
-                                            <NavItem label="Contact" active/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div
-                                    className="flex flex-col justify-center items-start px-6 text-base leading-6 text-gray-500 whitespace-nowrap">
-                                    <div className="flex flex-col pt-2.5 pb-5">
-                                        <div className="justify-center">
-                                            <NavItem label="Register/Login" to="/registerlogin"/>
-                                        </div>
-                                    </div>
-                                </div>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-            </header>
+            <Header current={"Contact"} />
             <main
                 className="flex flex-col flex-wrap justify-center content-center px-11 py-10 w-full bg-gray-100 max-md:px-5 max-md:max-w-full">
                 <section className="flex flex-col p-8 bg-white rounded-lg shadow-md max-md:px-5 max-md:max-w-full">
@@ -77,15 +35,15 @@ const Contact = () => {
                                     </header>
                                     <p className="justify-center mt-6 text-lg leading-7 text-gray-600 max-md:max-w-full">
                                         Have questions or need to schedule an appointment? Our team
-                                        <br/>
+                                        <br />
                                         is ready to help you with all your dental care needs.
                                     </p>
                                     <div className="flex flex-col mt-4 max-md:max-w-full">
-                                        <ContactInfo icon={<EmailIcon/>} info="contact@dentalhealthcare.com"/>
-                                        <ContactInfo icon={<PhoneIcon/>} info="+1 (555) 123-4567"/>
-                                        <ContactInfo icon={<FaxIcon/>} info="+1 (555) 765-4321"/>
+                                        <ContactInfo icon={<EmailIcon />} info="contact@dentalhealthcare.com" />
+                                        <ContactInfo icon={<PhoneIcon />} info="+1 (555) 123-4567" />
+                                        <ContactInfo icon={<FaxIcon />} info="+1 (555) 765-4321" />
                                         <ContactInfo
-                                            icon={<LocationIcon/>}
+                                            icon={<LocationIcon />}
                                             info="123 Dental St., Toothville, TX 75001, USA"
                                         />
                                     </div>
@@ -100,9 +58,9 @@ const Contact = () => {
                                     </header>
                                     <div className="flex flex-col mt-6 text-base max-md:max-w-full">
                                         <label className="flex flex-col max-md:max-w-full">
-                      <span className="justify-center font-medium text-gray-700 leading-[159%] max-md:max-w-full">
-                        Your Name
-                      </span>
+                                            <span className="justify-center font-medium text-gray-700 leading-[159%] max-md:max-w-full">
+                                                Your Name
+                                            </span>
                                             <input
                                                 type="text"
                                                 id="yourName"
@@ -113,9 +71,9 @@ const Contact = () => {
                                             />
                                         </label>
                                         <label className="flex flex-col mt-4 max-md:max-w-full">
-                      <span className="justify-center font-medium text-gray-700 leading-[156%] max-md:max-w-full">
-                        Your Email
-                      </span>
+                                            <span className="justify-center font-medium text-gray-700 leading-[156%] max-md:max-w-full">
+                                                Your Email
+                                            </span>
                                             <input
                                                 type="email"
                                                 id="yourEmail"
@@ -127,9 +85,9 @@ const Contact = () => {
                                         </label>
                                         <label
                                             className="flex flex-col mt-4 font-medium text-gray-700 whitespace-nowrap leading-[161%] max-md:max-w-full">
-                      <span className="justify-center max-md:max-w-full">
-                        Message
-                      </span>
+                                            <span className="justify-center max-md:max-w-full">
+                                                Message
+                                            </span>
                                             <textarea
                                                 id="yourMessage"
                                                 name="yourMessage"
