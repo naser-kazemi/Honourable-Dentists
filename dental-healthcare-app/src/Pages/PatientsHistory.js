@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { NavItem } from "../Components/NavItem";
+import axios from 'axios';
 import { RefButton } from "../Components/Button";
 import { Header } from '../Components/Header';
 
@@ -22,30 +22,32 @@ const PatientRecord = ({ name, lastVisit, services }) => (
 );
 
 function PatientsHistory() {
-    const patientRecords = [
-        { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
-        { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
-        { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
-        { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
-        { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
-        { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
-        { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
-        { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
-        { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
-        { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
-        { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
-        { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
-        { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
-        { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
-        { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
-        { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
-        { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
-        { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
-        { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
-        { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
-        { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
+    const token = localStorage.getItem('token');
+    const [patientRecords, setPatients] = useState([]);
+    // const patientRecords = [
+    //     { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
+    //     { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
+    //     { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
+    //     { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
+    //     { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
+    //     { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
+    //     { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
+    //     { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
+    //     { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
+    //     { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
+    //     { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
+    //     { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
+    //     { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
+    //     { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
+    //     { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
+    //     { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
+    //     { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
+    //     { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
+    //     { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
+    //     { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
+    //     { name: "John Smith", lastVisit: "February 20, 2023", services: "General Checkup, Teeth Cleaning" },
 
-    ];
+    // ];
 
     const [visibleRecords, setVisibleRecords] = useState(3); // Initial number of records to display
     const lastRecordRef = useRef(null);
@@ -60,6 +62,23 @@ function PatientsHistory() {
             lastRecordRef.current.scrollIntoView({ behavior: 'smooth' });
         }
     }, [visibleRecords]); // This effect runs every time visibleRecords changes
+
+    useEffect(() => {
+        const fetchAppointments = async () => {
+            try {
+                const response = await axios.get('http://localhost:8000/api/appointments/dentistpatienthistory/', {
+                    headers: {
+                        'Authorization': `Token ${token}`
+                    }
+                });
+                setPatients(response.data);
+            } catch (error) {
+                console.error('There was an error fetching the patients data!', error);
+            }
+        };
+
+        fetchAppointments();
+    }, [token]);
 
     return (
         <main className="flex flex-col justify-center px-4 pt-8 pb-20 bg-gray-100">
@@ -85,7 +104,7 @@ function PatientsHistory() {
                                         </div>
 
                                         <div className="self-start ml-20 text-xs font-semibold tracking-wide leading-4 text-gray-600 uppercase">
-                                            Last Visit
+                                            Visit Date
                                         </div>
 
                                         <div className="self-start ml-10 text-xs font-semibold tracking-wide leading-4 text-gray-600 uppercase">
@@ -112,7 +131,7 @@ function PatientsHistory() {
                                 <div className="flex w-full flex-col max-md:max-w-full">
                                     {patientRecords.slice(0, visibleRecords).map((record, index) => (
                                         <div ref={index === visibleRecords - 1 ? lastRecordRef : null} key={index}>
-                                            <PatientRecord key={index} {...record} />
+                                            <PatientRecord name={record.name} lastVisit={record.date} services={record.service} />
                                         </div>
 
                                     ))}

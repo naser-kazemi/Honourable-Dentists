@@ -164,6 +164,18 @@ class DentistAppointmentListView(generics.ListAPIView):
         return Appointment.objects.none()
 
 
+class DentistPreviousPatientsView(APIView):
+    def get(self, request, *args, **kwargs):
+        appointments = Appointment.objects.filter(dentist=request.user)
+        serializer = AppointmentReadSerializer(appointments, many=True)
+        data = serializer.data
+        for i in range(len(data)):
+            patient = User.objects.get(user_id=data[i]['patient'])
+            data[i]['patient'] = f"{patient.first_name} {patient.last_name}"
+            patient_profile = PatientProfile.objects.get(user=patient)
+        return Response(data)
+
+
 @csrf_exempt
 @api_view(('POST',))
 @renderer_classes((TemplateHTMLRenderer, JSONRenderer))

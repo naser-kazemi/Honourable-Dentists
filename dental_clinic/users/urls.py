@@ -14,7 +14,7 @@ from .views import (PatientProfileListCreateView,
                     register_patient_form,
                     login_user,
                     CurrentUserProfileView,
-                    update_patient,
+                    update_user,
                     )
 
 urlpatterns = [

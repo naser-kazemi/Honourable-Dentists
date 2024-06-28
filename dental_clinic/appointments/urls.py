@@ -11,6 +11,7 @@ from .views import (AppointmentListCreateView,
                     appointment_detail_view,
                     PatientPreviousAppointmentsView,
                     patient_appointment_history_view,
+                    DentistPreviousPatientsView
                     )
 
 urlpatterns = [
@@ -26,4 +27,5 @@ urlpatterns = [
     path('<int:appointment_id>/', appointment_detail_view, name='appointment-detail'),
     # path('patienthistory/', patient_appointment_history_view, name='patient-appointment-history'),
     path('patienthistory/', PatientPreviousAppointmentsView.as_view(), name='patient-appointment-history'),
+    path('dentistpatienthistory/', DentistPreviousPatientsView.as_view(), name='dentist-patient-history'),
 ]

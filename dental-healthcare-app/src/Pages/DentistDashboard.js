@@ -132,7 +132,7 @@ function DentistDashboard() {
                                                         src="https://cdn.builder.io/api/v1/image/assets/TEMP/49ce04ea953b3dfc9df497d263cc490dd97e5e3f662ac190b5e682d2c61d4e69?apiKey=0b32f1c6b149400da7ee52316f29de76&"
                                                         alt=""
                                                         label="Patient History"
-                                                        to="/dentistdashboard/patienthistory"
+                                                        to="/dentistdashboard/patientshistory"
                                                     />
                                                 </div>
                                                 <div className="flex gap-4 mt-4 max-md:flex-wrap max-md:max-w-full">
