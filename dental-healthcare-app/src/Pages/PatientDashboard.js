@@ -209,6 +209,14 @@ function PatientDashboard() {
                                                         to="/patientdashboard/medicalrecord"
                                                     />
                                                 </div>
+                                                <div className="flex gap-4 mt-4 max-md:flex-wrap max-md:max-w-full">
+                                                    <QuickLink
+                                                        src="https://cdn.builder.io/api/v1/image/assets/TEMP/241050a72cf7a70b7d6bd9ae49b41c54c451b7135dd10214e17252a83a7cfe87?apiKey=0b32f1c6b149400da7ee52316f29de76&"
+                                                        alt=""
+                                                        label="Book Imaging Session"
+                                                        to="/patientdashboard/imagingappointment"
+                                                    />
+                                                </div>
                                             </div>
                                         </div>
                                     </aside>

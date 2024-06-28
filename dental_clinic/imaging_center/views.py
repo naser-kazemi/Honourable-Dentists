@@ -1,5 +1,6 @@
 import json
-from .models import ImagingCenter
+from users.models import PatientProfile
+from .models import ImagingCenter, ImagingAppointment
 from django.views.generic import ListView, DetailView
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
@@ -38,6 +39,20 @@ def imaging_center_form(request):
             location=data.get('location', ''),
             phone=data.get('phone', ''),
             operational_hours=data.get('operational_hours', ''),
+        )
+        
+        return render(request, "imaging_center/list.html")
+
+
+@csrf_exempt
+def imaging_appointment_form(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        print('-------->', data)
+
+        appointment = ImagingAppointment.objects.create(
+            imaging_center=ImagingCenter.objects.get(name=data.get('center_name', '')),
+            patient=PatientProfile.objects.get(national_id=data.get('national_id', ''))
         )
         
         return render(request, "imaging_center/list.html")
