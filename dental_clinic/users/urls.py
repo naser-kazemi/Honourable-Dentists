@@ -15,6 +15,7 @@ from .views import (PatientProfileListCreateView,
                     login_user,
                     CurrentUserProfileView,
                     update_user,
+                    fetch_image
                     )
 
 urlpatterns = [
@@ -34,4 +35,5 @@ urlpatterns = [
     path('update_current_user/', update_user, name='update_user'),
     path('dashboard/dentist/', dentist_dashboard, name='dentist_dashboard'),
     path('upload-image/', upload_image, name='upload_image'),
+    path('fetch-image/', fetch_image, name='fetch_image'),
 ]

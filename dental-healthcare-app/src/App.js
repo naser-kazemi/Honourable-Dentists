@@ -26,6 +26,7 @@ import PatientsHistory from "./Pages/PatientsHistory";
 import DentistDashboard from "./Pages/DentistDashboard";
 import EditProfileForm from "./Pages/EditDentistProfile";
 import PatientAppointmentHistory from "./Pages/PatientAppointmentHistory";
+import ImageShowcase from "./Pages/ImageShowcase";
 
 const App = () => {
     return (
@@ -54,6 +55,7 @@ const App = () => {
                     <Route path="/dentistdashboard" element={<DentistDashboard />} />
                     <Route path="/dentistdashboard/patientshistory" element={<PatientsHistory />} />
                     <Route path="/dentistdashboard/editdentistprofile" element={<EditProfileForm />} />
+                    <Route path="/dentistdashboard/imageshowcase" element={<ImageShowcase />} />
                     <Route path="/techniciandashboard" element={<TechnicianDashboard />} />
                 </Routes>
             </Router>

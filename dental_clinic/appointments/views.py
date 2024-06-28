@@ -141,14 +141,17 @@ class PatientTodaysAppointmentsView(APIView):
         return Response(data)
 
 
-class DentistTodayAppointmentListView(generics.ListAPIView):
-    serializer_class = AppointmentListSerializer
-    permission_classes = [IsDentist]
-
-    def get_queryset(self):
-        self.request.user = CURRENT_USER['user']
-        today = timezone.now().date()
-        return Appointment.objects.filter(date=today, dentist=self.request.user)
+class DentistTodayAppointmentListView(APIView):
+    def get(self, request, *args, **kwargs):
+        today = timezone.localdate()
+        appointments = Appointment.objects.filter(dentist=request.user, date=today)
+        serializer = AppointmentReadSerializer(appointments, many=True)
+        data = serializer.data
+        for i in range(len(data)):
+            patient = User.objects.get(user_id=data[i]['patient'])
+            data[i]['patient'] = f"{patient.first_name} {patient.last_name}"
+            patient_profile = PatientProfile.objects.get(user=patient)
+        return Response(data)
 
 
 class DentistAppointmentListView(generics.ListAPIView):

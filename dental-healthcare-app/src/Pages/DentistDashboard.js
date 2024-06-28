@@ -1,5 +1,7 @@
 import * as React from "react";
 import { NavItem } from "../Components/NavItem";
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const AppointmentCard = ({ patient, time, procedure }) => (
     <div className="flex flex-col w-full justify-around px-3 py-4 max-md:max-w-full">
@@ -54,6 +56,26 @@ const RenderText = ({ text }) => {
 
 
 function DentistDashboard() {
+    const token = localStorage.getItem('token');
+    const [appointments, setAppointments] = useState([]);
+
+    useEffect(() => {
+        const fetchAppointments = async () => {
+            try {
+                const response = await axios.get('http://localhost:8000/api/appointments/today/dentist', {
+                    headers: {
+                        'Authorization': `Token ${token}`
+                    }
+                });
+                setAppointments(response.data);
+            } catch (error) {
+                console.error('There was an error fetching the appointments data!', error);
+            }
+        };
+
+        fetchAppointments();
+    }, [token]);
+
     return (
         <>
             <header className="flex flex-col bg-gray-100">
@@ -108,11 +130,13 @@ function DentistDashboard() {
                                                 <RenderText text="Today's Appointments" />
                                             </h2>
                                             <div className="flex flex-col justify-center mt-5 text-sm leading-5 bg-white rounded-lg shadow max-md:max-w-full">
+                                            {appointments.map(appointment => (
                                                 <AppointmentCard
-                                                    patient="Jane Doe"
-                                                    time="10:00 AM"
-                                                    procedure="General Checkup"
+                                                    patient={appointment.patient}
+                                                    time={appointment.time}
+                                                    procedure={appointment.service}
                                                 />
+                                            ))}
                                             </div>
                                         </div>
                                     </div>
@@ -145,7 +169,8 @@ function DentistDashboard() {
                                                     <QuickLink
                                                         src="https://cdn.builder.io/api/v1/image/assets/TEMP/56bdde0803b3210f084fd34413b5d1f63b797cdd5d7acc1073d13ff448c00eff?apiKey=0b32f1c6b149400da7ee52316f29de76&"
                                                         alt=""
-                                                        label="Notifications"
+                                                        label="Patient's Scan"
+                                                        to="/dentistdashboard/imageshowcase"
                                                     />
                                                 </div>
                                             </div>
