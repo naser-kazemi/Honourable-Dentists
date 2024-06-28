@@ -1,5 +1,4 @@
 import * as React from "react";
-import { NavItem } from "../Components/NavItem";
 import { Header } from "../Components/Header";
 
 const AppointmentCard = ({ patient, time, procedure }) => (

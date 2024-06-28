@@ -52,12 +52,12 @@ export function Header({ current }) {
                                 <div
                                     className="flex flex-col justify-center px-6 text-sm leading-5 text-gray-500 whitespace-nowrap">
                                     <div className="flex gap-0">
-                                        <NavItem label="Home" to="/" active={current == "Home"} />
-                                        <NavItem label="Imaging Centers" to={"/centersinfo"} active={current == "Imaging Centers"} />
-                                        <NavItem label="About" to="/about" active={current == "About"} />
-                                        <NavItem label="Services" to="/services" active={current == "Services"} />
-                                        <NavItem label="Donate" to={"/donation"} active={current == "Donate"} />
-                                        <NavItem label="Contact" to="/contact" active={current == "Contact"} />
+                                        <NavItem label="Home" to="/" active={current === "Home"} />
+                                        <NavItem label="Imaging Centers" to={"/centersinfo"} active={current === "Imaging Centers"} />
+                                        <NavItem label="About" to="/about" active={current === "About"} />
+                                        <NavItem label="Services" to="/services" active={current === "Services"} />
+                                        <NavItem label="Donate" to={"/donation"} active={current === "Donate"} />
+                                        <NavItem label="Contact" to="/contact" active={current === "Contact"} />
                                     </div>
                                 </div>
                             </div>
@@ -66,10 +66,10 @@ export function Header({ current }) {
                                 <div className="flex flex-col pt-2.5 pb-5">
                                     <div className="justify-center">
                                         {localStorage.getItem('user_type') === 'unknown' ?
-                                            <NavItem label="Register/Login" to="/registerlogin" active={current == "Register/Login"} /> :
-                                            <NavItem label="Logout" to="/registerlogin" active={current == "Register/Login"} onClick={logout} />
+                                            <NavItem label="Register/Login" to="/registerlogin" active={current === "Register/Login"} /> :
+                                            <NavItem label="Logout" to="/registerlogin" active={current === "Register/Login"} onClick={logout} />
                                         }
-                                        <NavItem label="Dashboard" to={dashboard_url} active={current == "Dashboard"} />
+                                        <NavItem label="Dashboard" to={dashboard_url} active={current === "Dashboard"} />
                                     </div>
                                 </div>
                             </div>

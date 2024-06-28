@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from '../AuthContext';
-import { NavItem } from "../Components/NavItem";
 import { RefButton } from "../Components/Button";
 import { Header } from "../Components/Header";
 

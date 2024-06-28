@@ -541,14 +541,16 @@ class CurrentUserProfileView(generics.RetrieveUpdateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        user = User.objects.get(username=self.request.user.username)
+        user = User.objects.get(username=request.user.username)
+        print(user)
         serializer = UserSerializer(user)
         data = serializer.data
         if user.is_patient:
             patient = PatientProfile.objects.get(user=user)
             data['national_id'] = patient.national_id
         if user.is_dentist:
-            pass
+            dentist = DentistProfile.objects.get(user=user)
+            data['medical_council_number'] = dentist.medical_council_number
         return Response(data)
 
 

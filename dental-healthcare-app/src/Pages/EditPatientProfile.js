@@ -29,6 +29,7 @@ const TextField = ({ label, value }) => (
             className="justify-center py-1.5 mt-2.5 text-base leading-6 bg-white rounded-md shadow-sm max-md:max-w-full"
             defaultValue={value}
             aria-label={label}
+            readOnly
         />
     </div>
 );
@@ -132,11 +133,11 @@ export default function EditProfileForm() {
                     <form className="flex flex-col justify-center mt-4 max-md:max-w-full" onSubmit={onSubmit}>
                         <div className="flex flex-col py-0.5 max-md:max-w-full">
                             <div className="flex gap-4 max-md:flex-wrap">
-                                <TextField label="First Name" value={profile.first_name} readOnly />
-                                <TextField label="Last Name" value={profile.last_name} readOnly />
+                                <TextField label="First Name" value={profile.first_name} />
+                                <TextField label="Last Name" value={profile.last_name} />
                             </div>
                             <div className="flex gap-4 mt-4 max-md:flex-wrap">
-                                <TextField label="National ID" value={profile.national_id} readOnly />
+                                <TextField label="National ID" value={profile.national_id} />
                                 <InputField
                                     label="Province"
                                     value={profile.province}

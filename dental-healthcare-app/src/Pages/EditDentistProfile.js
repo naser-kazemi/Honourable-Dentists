@@ -3,6 +3,7 @@ import axios from "axios";
 import { NavItem } from "../Components/NavItem";
 import { Button } from "../Components/Button";
 import { useNavigate } from "react-router-dom";
+import { Header } from "../Components/Header";
 
 const InputField = ({ label, value, placeholder, onChange }) => (
     <div className="flex flex-col flex-1 grow shrink-0 justify-center py-1 basis-0 w-fit max-md:max-w-full">
@@ -29,6 +30,7 @@ const TextField = ({ label, value }) => (
             className="justify-center py-1.5 mt-2.5 text-base leading-6 bg-white rounded-md shadow-sm max-md:max-w-full"
             defaultValue={value}
             aria-label={label}
+            readOnly
         />
     </div>
 );
@@ -49,7 +51,7 @@ export default function EditProfileForm() {
         username: '',
         first_name: '',
         last_name: '',
-        national_id: '',
+        medical_council_number: '',
         province: '',
         city: '',
         address: '',
@@ -123,41 +125,7 @@ export default function EditProfileForm() {
 
     return (
         <main className="flex flex-col justify-center px-4 pt-8 pb-20 bg-gray-100">
-            <header className="flex flex-col bg-gray-100">
-                <div className="flex flex-col justify-center pb-2.5 w-full bg-gray-100 max-md:max-w-full">
-                    <div className="flex flex-col justify-center w-full bg-white shadow-md max-md:max-w-full">
-                        <div className="flex flex-col justify-center px-8 w-full max-md:px-5 max-md:max-w-full">
-                            <nav className="flex gap-5 justify-between w-full max-md:flex-wrap max-md:max-w-full">
-                                <div className="flex gap-0 max-md:flex-wrap">
-                                    <div className="flex flex-col py-5 text-xl font-semibold leading-7 text-black">
-                                        <div className="justify-center"><img src="/logo_mark.png" alt="Logo"
-                                            className="w-12" />
-                                        </div>
-                                    </div>
-                                    <div
-                                        className="flex flex-col justify-center px-6 text-sm leading-5 text-gray-500 whitespace-nowrap">
-                                        <div className="flex gap-0">
-                                            <NavItem label="Home" to="/" />
-                                            <NavItem label="About" to="/about" />
-                                            <NavItem label="Services" to="/services" />
-                                            <NavItem label="Contact" to="/contact" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div
-                                    className="flex flex-col justify-center items-start px-6 text-base leading-6 text-gray-500 whitespace-nowrap">
-                                    <div className="flex flex-col pt-2.5 pb-5">
-                                        <div className="justify-center">
-                                            <NavItem label="Register/Login" to="/registerlogin" />
-                                            <NavItem label="Dashboard" to={"/dentistdashboard"} active />
-                                        </div>
-                                    </div>
-                                </div>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-            </header>
+            <Header current={"Dashboard"} />
             <section className="flex flex-col justify-center max-md:max-w-full">
                 <article className="flex flex-col justify-center px-8 py-8 bg-white rounded-lg shadow max-md:px-5 max-md:max-w-full">
                     <header className="flex flex-col justify-center items-start py-2 text-xl font-semibold leading-7 text-gray-700 max-md:pr-5 max-md:max-w-full">
@@ -166,11 +134,11 @@ export default function EditProfileForm() {
                     <form className="flex flex-col justify-center mt-4 max-md:max-w-full" onSubmit={onSubmit}>
                         <div className="flex flex-col py-0.5 max-md:max-w-full">
                             <div className="flex gap-4 max-md:flex-wrap">
-                                <TextField label="First Name" value={profile.first_name} readOnly />
-                                <TextField label="Last Name" value={profile.last_name} readOnly />
+                                <TextField label="First Name" value={profile.first_name} />
+                                <TextField label="Last Name" value={profile.last_name} />
                             </div>
                             <div className="flex gap-4 mt-4 max-md:flex-wrap">
-                                <TextField label="National ID" value={profile.national_id} readOnly />
+                                <TextField label="Medical Council Number" value={profile.medical_council_number} />
                                 <InputField
                                     label="Province"
                                     value={profile.province}
