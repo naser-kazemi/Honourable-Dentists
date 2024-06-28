@@ -25,13 +25,14 @@ function Login() {
                 'username': username,
                 'password': password
             });
-            const { token, user_id, username: userName } = response.data;
+            const { token, user_type, user_id, username: userName } = response.data;
             console.log('Login successful!', response.data);
             login({ id: user_id, username: userName }, token);
             // save the authentication data to local storage
             localStorage.setItem('token', token);
             localStorage.setItem('user_id', user_id);
             localStorage.setItem('username', userName);
+            localStorage.setItem('user_type', user_type);
             navigate("/");
         } catch (error) {
             console.error('There was an error logging in!', error);

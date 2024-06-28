@@ -1,7 +1,42 @@
 import { NavItem } from "../Components/NavItem";
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
+
+
+
+
 
 export function Header({ current }) {
+
+    const navigate = useNavigate();
+    const token = localStorage.getItem('token');
+
+
+    const user_type = localStorage.getItem('user_type');
+    const dashboard_url = user_type === 'unknown' ? '/registerlogin' : user_type === "patient" ? '/patientdashboard' : user_type === "dentist" ? '/dentistdashboard' : '/techniciandashboard';
+    console.log(user_type, dashboard_url)
+
+
+    const logout = async (e) => {
+        e.preventDefault();
+        try {
+            await axios.post('http://localhost:8000/api/users/logout/', {}, {
+                headers: {
+                    'Authorization': `Token ${token}`
+                }
+            });
+            localStorage.setItem('token', '');
+            localStorage.setItem('user_id', '');
+            localStorage.setItem('username', '');
+            localStorage.setItem('user_type', 'unknown');
+            navigate('/'); // Redirect to login page after logout
+        } catch (error) {
+            console.error('Failed to log out:', error);
+        }
+    };
+
     return (
         <header className="flex flex-col bg-gray-100">
             <div className="flex flex-col justify-center pb-2.5 w-full bg-gray-100 max-md:max-w-full">
@@ -30,8 +65,11 @@ export function Header({ current }) {
                                 className="flex flex-col justify-center items-start px-6 text-base leading-6 text-gray-500 whitespace-nowrap">
                                 <div className="flex flex-col pt-2.5 pb-5">
                                     <div className="justify-center">
-                                        <NavItem label="Register/Login" to="/registerlogin" active={current == "Register/Login"} />
-                                        <NavItem label="Dashboard" to={"/patientdashboard"} active={current == "Dashboard"} />
+                                        {localStorage.getItem('user_type') === 'unknown' ?
+                                            <NavItem label="Register/Login" to="/registerlogin" active={current == "Register/Login"} /> :
+                                            <NavItem label="Logout" to="/registerlogin" active={current == "Register/Login"} onClick={logout} />
+                                        }
+                                        <NavItem label="Dashboard" to={dashboard_url} active={current == "Dashboard"} />
                                     </div>
                                 </div>
                             </div>
