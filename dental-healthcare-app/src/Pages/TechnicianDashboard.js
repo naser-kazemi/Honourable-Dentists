@@ -4,15 +4,10 @@ import { Header } from "../Components/Header";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 
-
 function FormInput({ id, label, type, value, onChange }) {
     return (
-        <div
-            className="flex flex-col mt-2 px-3.5 pt-2.5 pb-2.5 bg-white rounded-md border border-gray-300 border-solid max-md:max-w-full">
-            <label
-                htmlFor={id}
-                className="justify-center max-md:max-w-full sr-only"
-            >
+        <div className="flex flex-col mt-2 px-3.5 pt-2.5 pb-2.5 bg-white rounded-md border border-gray-300 border-solid max-md:max-w-full">
+            <label htmlFor={id} className="justify-center max-md:max-w-full sr-only">
                 {label}
             </label>
             <input
@@ -29,16 +24,10 @@ function FormInput({ id, label, type, value, onChange }) {
     );
 }
 
-
 function TechnicianDashboard() {
     const nav = useNavigate();
     const [patientId, setPatientId] = useState('');
     const [file, setFile] = useState(null);
-
-    // const [centerName, setName] = useState('');
-    // const [location, setLocation] = useState('');
-    // const [phone, setPhone] = useState('');
-    // const [operational_hours, setOpHours] = useState('');
 
     const [formDataCenter, setFormData] = useState({
         centerName: '',
@@ -82,7 +71,7 @@ function TechnicianDashboard() {
             }
 
             const data = await response.json();
-            console.log(data); // You can handle the response accordingly
+            console.log(data);
             alert('Upload successful!');
         } catch (error) {
             console.error('Error:', error);
@@ -110,28 +99,18 @@ function TechnicianDashboard() {
 
     return (
         <>
-            < Header current={"Technician Dashboard"} />
+            <Header current={"Technician Dashboard"} />
             <main className="flex flex-col justify-center pt-8 pb-20 bg-gray-100">
-                <div className="flex flex-col justify-center py-px w-full bg-gray-100 max-md:max-w-full">
+                <div className="flex flex-col items-center justify-center py-px w-full bg-gray-100 max-md:max-w-full">
                     <header className="flex flex-col justify-center px-8 py-6 w-full text-3xl font-bold leading-9 text-gray-900 bg-white shadow max-md:px-5 max-md:max-w-full">
                         <div className="flex flex-col justify-center items-start py-2 max-md:pr-5 max-md:max-w-full">
                             <h1 className="justify-center">Technician Dashboard</h1>
                         </div>
                     </header>
-                    <div className="flex flex-row justify-between px-8 py-6">
-                        {/* Technician Information Section */}
-                        <div className="w-1/2 pr-4">
-                            <h2 className="text-3xl font-bold mb-4">Technician Information</h2>
-                            <p className="text-lg">Name: John Doe</p>
-                            <p className="text-lg">Certificate Number: 24285672</p>
-                            <p className="text-lg">Email: john.doe@example.com</p>
-                            <p className="text-lg">Username: JohnDoe</p>
-                            <p className="text-lg">City: London</p>
-                        </div>
-                        {/* Image Upload Section */}
-                        <div className="w-1/2 pl-4">
+                    <div className="flex flex-col items-center justify-center w-full px-8 py-6">
+                        <div className="w-full max-w-2xl">
                             <h2 className="text-3xl font-bold mb-4">Patient Image Upload</h2>
-                            <form onSubmit={handleSubmitImage} className="shadow-lg p-4 rounded-lg bg-white">
+                            <form onSubmit={handleSubmitImage} className="shadow-lg p-4 rounded-lg bg-white mb-8">
                                 <div className="mb-4">
                                     <label htmlFor="patientId" className="block text-lg font-medium text-gray-700">Patient ID</label>
                                     <input onChange={handlePatientIdChange} type="text" id="user_id" name="user_id" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />

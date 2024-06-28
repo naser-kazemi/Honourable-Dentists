@@ -1,6 +1,7 @@
 import json
 from copy import deepcopy
 
+from django.http import JsonResponse, HttpResponseForbidden, Http404, FileResponse
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password
@@ -534,6 +535,28 @@ def upload_image(request):
         )
 
         return render(request, 'base_user.html')
+
+
+@csrf_exempt
+def fetch_image(request):
+    # if not request.user.is_dentist:
+    #     return HttpResponseForbidden("You are not authorized to fetch images.")
+
+    if request.method == 'GET':
+        national_id = request.GET.get('user_id')
+        if not national_id:
+            return JsonResponse({'error': 'National ID is required'}, status=400)
+        
+        try:
+            image = get_object_or_404(RadiologyImage, user_id=national_id)
+            return FileResponse(image.image.open(), as_attachment=False, content_type='image/jpeg')
+
+        except RadiologyImage.DoesNotExist:
+            return JsonResponse({'error': 'Image not found'}, status=404)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+        
 
 
 class CurrentUserProfileView(generics.RetrieveUpdateAPIView):
