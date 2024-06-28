@@ -555,7 +555,7 @@ class CurrentUserProfileView(generics.RetrieveUpdateAPIView):
 @csrf_exempt
 @api_view(('POST',))
 @renderer_classes((TemplateHTMLRenderer, JSONRenderer))
-def update_patient(request):
+def update_user(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
@@ -581,7 +581,7 @@ def update_patient(request):
             user.save()
 
             print(user)
-            messages.success(request, 'Patient updated successfully!')
+            messages.success(request, 'User updated successfully!')
             return Response({'message': str(messages)}, status=status.HTTP_200_OK)
         except ValidationError:
             messages.error(request, 'Invaild phone number')

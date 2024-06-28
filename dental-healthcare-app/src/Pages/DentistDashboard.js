@@ -20,12 +20,16 @@ const AppointmentCard = ({ patient, time, procedure }) => (
     </div>
 );
 
-const QuickLinkCard = ({ icon, text }) => (
-    <div className="flex flex-col flex-1 grow shrink-0 justify-center items-center px-16 py-5 bg-white rounded-lg shadow basis-0 w-fit max-md:px-5">
-        <img loading="lazy" src={icon} alt="" className="self-center w-6 aspect-square" />
-        <div className="justify-center self-start mt-3.5">{text}</div>
+const QuickLink = ({ src, alt, label, to }) => (
+    <div
+        className="flex flex-col flex-1 grow shrink-0 justify-center items-center py-5 px-5 bg-white rounded-lg shadow basis-0 w-fit max-md:px-5">
+        <a href={to}>
+            <img alt={alt} loading="lazy" src={src} className="self-center w-6 aspect-square" />
+        </a>
+        <div className="justify-center self-start mt-3.5">{label}</div>
     </div>
 );
+
 
 const PatientHistoryCard = ({ patient, lastVisit }) => (
     <div className="flex flex-row justify-around w-full px-4 py-4 max-md:max-w-full">
@@ -51,13 +55,6 @@ const RenderText = ({ text }) => {
 
 
 function DentistDashboard() {
-    const quickLinks = [
-        { icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/480e7f1fcbcdabfa1cd0ac73f5c741308b11b0ce226a5a579be6f3cb6d972baf?apiKey=0b32f1c6b149400da7ee52316f29de76&", text: "Manage Availability" },
-        { icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/49ce04ea953b3dfc9df497d263cc490dd97e5e3f662ac190b5e682d2c61d4e69?apiKey=0b32f1c6b149400da7ee52316f29de76&", text: "Patient History" },
-        { icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/b5fcea8de9d537088621f41f7dbd625096f754ff6ed7d8bd4f7d78b3553b57f7?apiKey=0b32f1c6b149400da7ee52316f29de76&", text: "Edit Profile" },
-        { icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/56bdde0803b3210f084fd34413b5d1f63b797cdd5d7acc1073d13ff448c00eff?apiKey=0b32f1c6b149400da7ee52316f29de76&", text: "Notifications" }
-    ];
-
     return (
         <>
             <Header current={"Dashboard"} />
@@ -92,15 +89,31 @@ function DentistDashboard() {
                                                 Quick Links
                                             </h2>
                                             <div className="flex flex-col mt-5 text-sm leading-5 text-center max-md:max-w-full">
-                                                <div className="flex gap-4 max-md:flex-wrap max-md:max-w-full">
-                                                    {quickLinks.slice(0, 2).map((link, index) => (
-                                                        <QuickLinkCard key={index} icon={link.icon} text={link.text} />
-                                                    ))}
+                                            <div className="flex gap-4 max-md:flex-wrap max-md:max-w-full">
+                                                    <QuickLink
+                                                        src="https://cdn.builder.io/api/v1/image/assets/TEMP/480e7f1fcbcdabfa1cd0ac73f5c741308b11b0ce226a5a579be6f3cb6d972baf?apiKey=0b32f1c6b149400da7ee52316f29de76&"
+                                                        alt=""
+                                                        label="Manage Availability"
+                                                    />
+                                                    <QuickLink
+                                                        src="https://cdn.builder.io/api/v1/image/assets/TEMP/49ce04ea953b3dfc9df497d263cc490dd97e5e3f662ac190b5e682d2c61d4e69?apiKey=0b32f1c6b149400da7ee52316f29de76&"
+                                                        alt=""
+                                                        label="Patient History"
+                                                        to="/dentistdashboard/patienthistory"
+                                                    />
                                                 </div>
                                                 <div className="flex gap-4 mt-4 max-md:flex-wrap max-md:max-w-full">
-                                                    {quickLinks.slice(2).map((link, index) => (
-                                                        <QuickLinkCard key={index + 2} icon={link.icon} text={link.text} />
-                                                    ))}
+                                                    <QuickLink
+                                                        src="https://cdn.builder.io/api/v1/image/assets/TEMP/8dd46794fa6c450d5518d3c3b6e4c4eaa892283077da98a6f530c00f855f12b3?apiKey=0b32f1c6b149400da7ee52316f29de76&"
+                                                        alt=""
+                                                        label="Edit Profile"
+                                                        to="/dentistdashboard/editdentistprofile"
+                                                    />
+                                                    <QuickLink
+                                                        src="https://cdn.builder.io/api/v1/image/assets/TEMP/56bdde0803b3210f084fd34413b5d1f63b797cdd5d7acc1073d13ff448c00eff?apiKey=0b32f1c6b149400da7ee52316f29de76&"
+                                                        alt=""
+                                                        label="Notifications"
+                                                    />
                                                 </div>
                                             </div>
                                         </div>
