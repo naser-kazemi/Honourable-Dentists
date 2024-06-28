@@ -75,7 +75,8 @@ class PatientProfileListCreateView(generics.ListCreateAPIView):
 
             if user.address:
                 try:
-                    latitude, longitude = get_geocode(user.address, settings.NESHAN_API_KEY)
+                    latitude, longitude = get_geocode(
+                        user.address, settings.NESHAN_API_KEY)
                     user.location_latitude = latitude
                     user.location_longitude = longitude
                     user.save()
@@ -146,7 +147,8 @@ def create_user_from_form(request):
     if user.is_patient:
         birth_date = data['birth_date']
         birth_date = birth_date.split('T')[0]
-        PatientProfile.objects.create(user=user, national_id=data['national_id'], birth_date=birth_date)
+        PatientProfile.objects.create(
+            user=user, national_id=data['national_id'], birth_date=birth_date)
 
     if user.is_dentist:
         DentistProfile.objects.create(user=user, phone_number=data['phone_number'],
@@ -157,7 +159,8 @@ def create_user_from_form(request):
 
     if user.address:
         try:
-            latitude, longitude = get_geocode(user.address, settings.NESHAN_API_KEY)
+            latitude, longitude = get_geocode(
+                user.address, settings.NESHAN_API_KEY)
             user.latitude = latitude
             user.longitude = longitude
             user.save()
@@ -173,7 +176,8 @@ def register_patient_form(request):
         form = PatientRegistrationForm(request.POST)
         print(form)
         if form.is_valid():
-            print("0000000000000alsnnaosk[dakmsnljdka[okdfnqpewkv'n;'ewprqfjn;qewrf'")
+            print(
+                "0000000000000alsnnaosk[dakmsnljdka[okdfnqpewkv'n;'ewprqfjn;qewrf'")
             data = form.cleaned_data
             print("==================")
             print(data)
@@ -209,7 +213,8 @@ def register_patient_form(request):
 
             if user.address:
                 try:
-                    latitude, longitude = get_geocode(user.address, settings.NESHAN_API_KEY)
+                    latitude, longitude = get_geocode(
+                        user.address, settings.NESHAN_API_KEY)
                     user.location_latitude = latitude
                     user.location_longitude = longitude
                     user.save()
@@ -263,7 +268,8 @@ def register_patient(request):
 
             if user.address:
                 try:
-                    latitude, longitude = get_geocode(user.address, settings.NESHAN_API_KEY)
+                    latitude, longitude = get_geocode(
+                        user.address, settings.NESHAN_API_KEY)
                     user.location_latitude = latitude
                     user.location_longitude = longitude
                     user.save()
@@ -314,7 +320,8 @@ def register_dentist(request):
 
             if user.address:
                 try:
-                    latitude, longitude = get_geocode(user.address, settings.NESHAN_API_KEY)
+                    latitude, longitude = get_geocode(
+                        user.address, settings.NESHAN_API_KEY)
                     user.location_latitude = latitude
                     user.location_longitude = longitude
                     user.save()
@@ -361,7 +368,8 @@ def register_technician(request):
             user.save()
 
             TechnicianProfile.objects.create(user=user,
-                                             certification_number=data.get('certification_number'),
+                                             certification_number=data.get(
+                                                 'certification_number'),
                                              email=data.get('email'))
 
             messages.success(request, 'Technician registered successfully!')
@@ -402,7 +410,8 @@ def register_technician_form(request):
             user.set_password(password)
             user.save()
             TechnicianProfile.objects.create(user=user,
-                                             certification_number=form.cleaned_data.get('certification_number'),
+                                             certification_number=form.cleaned_data.get(
+                                                 'certification_number'),
                                              email=form.cleaned_data.get('email'))
             messages.success(request, 'Technician registered successfully!')
 
@@ -434,7 +443,7 @@ class FormLoginView(View):
                 global CURRENT_USER
                 CURRENT_USER['user'] = deepcopy(user)
                 CURRENT_USER['is_logged_in'] = True
-                login_user(request, user)
+                login(request, user)
                 if user.is_patient:
                     print("the user is a patient")
                     return redirect('patient_dashboard')
@@ -448,6 +457,16 @@ class FormLoginView(View):
                 form.add_error(None, 'Invalid username or password.')
 
         return render(request, self.template_name, {'form': form})
+
+
+def get_user_type(user):
+    if user.is_patient:
+        return 'patient'
+    elif user.is_dentist:
+        return 'dentist'
+    elif user.is_technician:
+        return 'technician'
+    return 'unknown'
 
 
 @csrf_exempt
@@ -468,10 +487,24 @@ def login_user(request):
         CURRENT_USER['is_logged_in'] = True
         login(request, user)
         token, created = Token.objects.get_or_create(user=user)
-        return Response({'token': token.key, 'user_id': user.user_id, 'username': user.username},
+        user_type = get_user_type(user)
+        return Response({'token': token.key, 'user_type': user_type, 'user_id': user.user_id, 'username': user.username},
                         status=status.HTTP_200_OK)
 
     return Response({'error': 'Invalid Credentials'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@csrf_exempt
+@api_view(('POST',))
+@renderer_classes((TemplateHTMLRenderer, JSONRenderer))
+def logout_view(request):
+    try:
+        request.user.auth_token.delete()
+        CURRENT_USER['is_logged_in'] = False
+        CURRENT_USER['user'] = User()
+        return Response({'message': 'Logged out successfully'}, status=status.HTTP_200_OK)
+    except (AttributeError, Token.DoesNotExist):
+        return Response({'error': 'Invalid token or user already logged out.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @login_required
@@ -531,14 +564,16 @@ class CurrentUserProfileView(generics.RetrieveUpdateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        user = User.objects.get(username=self.request.user.username)
+        user = User.objects.get(username=request.user.username)
+        print(user)
         serializer = UserSerializer(user)
         data = serializer.data
         if user.is_patient:
             patient = PatientProfile.objects.get(user=user)
             data['national_id'] = patient.national_id
         if user.is_dentist:
-            pass
+            dentist = DentistProfile.objects.get(user=user)
+            data['medical_council_number'] = dentist.medical_council_number
         return Response(data)
 
 
@@ -561,7 +596,8 @@ def update_user(request):
 
             if user.address:
                 try:
-                    latitude, longitude = get_geocode(user.address, settings.NESHAN_API_KEY)
+                    latitude, longitude = get_geocode(
+                        user.address, settings.NESHAN_API_KEY)
                     user.location_latitude = latitude
                     user.location_longitude = longitude
                 except ValueError:

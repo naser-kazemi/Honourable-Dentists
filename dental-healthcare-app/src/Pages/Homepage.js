@@ -1,7 +1,7 @@
 import React from 'react';
 import { AddUserIcon, CalendarIcon, HomeIcon } from "./Icons";
 import { NavItem } from "../Components/NavItem";
-import { RefButton } from "../Components/Button";
+import { RefButton, RefButtonWhite } from "../Components/Button";
 import { Header } from '../Components/Header';
 
 
@@ -29,13 +29,13 @@ const Homepage = () => (
                         Dentists, and Radiology Centers</p>
                     <div
                         className="flex gap-4 justify-center items-start px-20 pt-4 mt-4 text-base font-semibold leading-6 text-indigo-600">
-                        <RefButton text="I'm a Patient" />
-                        <RefButton text="I'm a Dentist" />
-                        <RefButton text="I'm a Technician" />
+                        <RefButtonWhite text="I'm a Patient" />
+                        <RefButtonWhite text="I'm a Dentist" />
+                        <RefButtonWhite text="I'm a Technician" />
                     </div>
                     <div
                         className="flex gap-4 justify-center items-start px-20 pt-4 mt-4 text-base font-semibold leading-6 text-indigo-600">
-                        <RefButton text="Check the imaging centers" to={"/centersinfo"} />
+                        <RefButtonWhite text="Check the imaging centers" to={"/centersinfo"} />
                     </div>
                 </div>
             </div>
